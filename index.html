@@ -238,6 +238,15 @@ table.std td.pts{font-weight:900}
 .lineups ol{padding-left:20px;font-size:14px;line-height:1.8}
 .msec{padding:16px 20px;border-bottom:1px solid var(--line)}
 .msec h4{font-family:'Bebas Neue';font-size:20px;margin-bottom:8px}
+/* --- Fiche joueur --- */
+.pcard{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;margin-bottom:16px}
+.pcard p{color:#d2d7e2;line-height:1.7}
+.tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.tags span{background:var(--panel2);border:1px solid var(--line);padding:5px 11px;border-radius:999px;font-size:13px;font-weight:600}
+.trophies{list-style:none;display:grid;gap:6px}
+.trophies li{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:9px 12px;font-weight:600}
+.trophies li::before{content:"🏆 "}
+.crest.round{border-radius:50%}
 /* --- Fiche équipe --- */
 .team-head{margin-top:22px;border-radius:var(--r);overflow:hidden;position:relative;padding:26px 24px;display:flex;gap:20px;align-items:center;flex-wrap:wrap}
 .team-head .cover{position:absolute;inset:0;opacity:.55}
@@ -286,7 +295,7 @@ footer button{text-align:left;color:var(--muted)} footer button:hover{color:var(
   <div class="wrap mast">
     <div class="logo" data-go="home"><div class="mk">⚡</div>SPORT<span>ZONE</span></div>
     <nav id="nav"></nav>
-    <div class="search"><input id="q" type="search" placeholder="Équipe, joueur, compétition…" autocomplete="off"></div>
+    <div class="search"><input id="q" type="search" placeholder="Joueur, équipe, compétition…" autocomplete="off"></div>
   </div>
   <div class="scores" id="scores" style="display:none"><div class="wrap" id="scoresIn"></div></div>
 </header>
@@ -329,7 +338,7 @@ const SPORTS = {
 const NAV = ["foot","basket","tennis","rugby","f1","velo","mma","hand"];
 const S = k => SPORTS[k] || SPORTS.autre;
 
-const state = { articles:[], results:[], archive:[], comps:[], q:"", ctab:"cal", year:"all", view:"home", loadedA:false, loadedR:false };
+const state = { articles:[], results:[], archive:[], comps:[], players:[], q:"", ctab:"cal", year:"all", view:"home", loadedA:false, loadedR:false };
 let db=null, canWrite=false;
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -416,7 +425,7 @@ function go(v){
   render(); window.scrollTo({top:0});
 }
 window.addEventListener("hashchange", ()=>{ const h=location.hash.slice(1); if(h && h!==state.view && validView(h)){ state.view=h; render(); } });
-const validView = v => ["home","results","palmares","competitions","recherche","autres",...Object.keys(SPORTS)].includes(v) || /^c-[a-z0-9-]+$/.test(v) || /^t-[a-z0-9-]+$/.test(v);
+const validView = v => ["home","results","palmares","competitions","recherche","autres",...Object.keys(SPORTS)].includes(v) || /^c-[a-z0-9-]+$/.test(v) || /^t-[a-z0-9-]+$/.test(v) || /^j-[a-z0-9-]+$/.test(v);
 
 /* ---------- Compétitions & recherche ---------- */
 const norm = s => String(s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
@@ -484,7 +493,7 @@ function searchHTML(){
   const q=state.q.trim(), n=norm(q);
   let h=`<h2 class="sec">Recherche${q?` : « ${esc(q)} »`:""}</h2>`;
   if(n.length<2) return h+emptyHTML("Tape au moins 2 lettres","Une équipe, un joueur, une compétition, un sport…");
-  const al=new Set([n]); teamHits(q).slice(0,3).forEach(t=>t.aliases.forEach(a=>{ if(norm(a).length>=3) al.add(norm(a)); }));
+  const al=new Set([n]); playerHits(q).slice(0,2).forEach(p=>p.aliases.forEach(a=>{ if(norm(a).length>=4) al.add(norm(a)); })); teamHits(q).slice(0,3).forEach(t=>t.aliases.forEach(a=>{ if(norm(a).length>=3) al.add(norm(a)); }));
   const has=s=>{ const x=norm(s); for(const a of al) if(x.includes(a)) return true; return false; };
   const sportHits=Object.entries(SPORTS).filter(([k,v])=>has(v.n));
   const comps=state.comps.filter(k=>has(k.name)||has(k.country)||has(k.short)||(k.match||[]).some(has)||has(S(k.sport).n));
@@ -495,7 +504,9 @@ function searchHTML(){
   const tlist=Object.entries(teams).sort((a,b)=>b[1]-a[1]).slice(0,12);
   let any=false;
   if(sportHits.length||comps.length){ any=true; h+=`<h3 class="bebas" style="font-size:22px;margin:10px 0">Compétitions et sports</h3><div class="comp-grid">${sportHits.map(([k,v])=>`<div class="comp-card" data-go="${k}"><div class="ic" style="background:linear-gradient(135deg,${v.c1},${v.c2})">${v.e}</div><div><b>${hl(v.n,q)}</b><span>Toute l'actu</span></div></div>`).join("")}${comps.map(compCard).join("")}</div>`; }
-  const th=teamHits(q);
+  const ph=playerHits(q);
+  if(ph.length){ any=true; h+=`<h3 class="bebas" style="font-size:22px;margin:10px 0">Joueurs</h3><div class="comp-grid">${ph.map(playerHitHTML).join("")}</div>`; }
+  const th=teamHits(q).filter(t=>!ph.some(p=>p.sport===t.sport && slug(p.name)===slug(t.name)));
   if(th.length){ any=true; h+=`<h3 class="bebas" style="font-size:22px;margin:10px 0">Équipes et joueurs</h3><div class="comp-grid">${th.map(teamHitHTML).join("")}</div>`; }
   if(arts.length){ any=true; h+=`<h3 class="bebas" style="font-size:22px;margin:22px 0 10px">Actus (${arts.length})</h3><div class="grid">${arts.slice(0,9).map(a=>cardHTML(a)).join("")}</div>`; }
   if(res.length){ any=true; const by={}; res.slice(0,40).forEach(r=>{(by[r.date] ||= []).push(r);});
@@ -588,6 +599,53 @@ function teamPageHTML(id){
 }
 function teamHits(q){ const n=norm(q); if(n.length<2) return []; return Object.values(teamIndex()).filter(t=>[...t.aliases].some(a=>norm(a).includes(n))).sort((a,b)=>{ const ea=[...a.aliases].some(x=>norm(x)===n)?0:1, eb=[...b.aliases].some(x=>norm(x)===n)?0:1; return ea-eb || b.n-a.n; }).slice(0,12); }
 function teamHitHTML(t){ return `<div class="team-hit" data-go="${esc(t.id)}">${crestHTML(t)}<div><b>${esc(t.name)}</b><span>${S(t.sport).e} ${S(t.sport).n}</span></div></div>`; }
+
+/* ---------- Joueurs ---------- */
+const stripStat = n => String(n||"").replace(/\s*\(.*\)\s*$/,"").trim();
+const playerId = (sport,name) => "j-"+sport+"-"+slug(stripStat(name));
+let PI=null, PIsig="";
+function playerIndex(){
+  const sig=state.players.length+"|"+state.results.length+"|"+state.articles.length;
+  if(PI && sig===PIsig) return PI;
+  const idx={}, alias={};
+  state.players.forEach(p=>{ const id=playerId(p.sport,p.name); idx[id]={id,sport:p.sport,name:p.name,doc:p,aliases:new Set([p.name,...(p.aliases||[])]),events:[]}; [p.name,...(p.aliases||[])].forEach(a=>{ alias[p.sport+"|"+norm(a)]=id; }); });
+  const find=(sport,name)=>{ const n=norm(stripStat(name)); if(!n) return null; return alias[sport+"|"+n] || null; };
+  const add=(sport,name)=>{ let id=find(sport,name); if(!id){ id=playerId(sport,name); if(!idx[id]){ idx[id]={id,sport,name:stripStat(name),doc:null,aliases:new Set([stripStat(name)]),events:[]}; alias[sport+"|"+norm(stripStat(name))]=id; } } return idx[id]; };
+  state.results.forEach(r=>{ const d=r.details; if(!d) return;
+    (d.buteurs||[]).forEach(e=>{ if(!e.joueur) return; const p=add(r.sport,e.joueur); p.events.push({r,type:"but",e,team:e.equipe==="away"?r.away:r.home}); });
+    if(d.compos) ["home","away"].forEach(side=>(d.compos[side]||[]).forEach(nm=>{ const p=add(r.sport,nm); p.events.push({r,type:"compo",team:side==="away"?r.away:r.home}); }));
+  });
+  PI=idx; PIsig=sig; return idx;
+}
+function playerArticles(p){ const al=[...p.aliases].filter(a=>a.length>=4).map(norm); return state.articles.filter(a=>{ const txt=" "+norm(a.title+" "+a.summary+" "+a.content)+" "; return al.some(x=>new RegExp("[^a-z0-9]"+x.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"[^a-z0-9]").test(txt)); }); }
+function ageOf(iso){ if(!iso) return ""; const b=new Date(iso+"T12:00:00"), n=new Date(); let a=n.getFullYear()-b.getFullYear(); if(n<new Date(n.getFullYear(),b.getMonth(),b.getDate())) a--; return isNaN(a)?"":a+" ans"; }
+function playerPageHTML(id){
+  const p=playerIndex()[id];
+  if(!p) return (state.loadedR? emptyHTML("Joueur introuvable","Essaie la recherche en haut de la page.") : emptyHTML("Chargement…",""));
+  const d=p.doc||{};
+  const T={name:p.name,id:p.id};
+  const goals=p.events.filter(e=>e.type==="but"), apps=[...new Map(p.events.map(e=>[e.r.id,e])).values()];
+  const arts=playerArticles(p);
+  const club=d.club||(apps[0]&&apps[0].team)||"";
+  const tags=[d.poste,d.nationalite,d.naissance?ageOf(d.naissance)+" ("+new Date(d.naissance+"T12:00:00").toLocaleDateString("fr-FR",{day:"numeric",month:"long",year:"numeric"})+")":"",d.taille,d.numero?"N° "+d.numero:""].filter(Boolean);
+  let h=`<div class="team-head"><div class="cover" style="background-image:url('${coverURL(p.sport,p.id)}');background-size:cover"></div><div class="shade"></div>
+    ${crestHTML(T,"round")}<div><h1>${esc(p.name)}</h1><div class="sub">${S(p.sport).e} <span class="link" data-go="${p.sport}">${S(p.sport).n}</span>${club?` · <span class="link" data-team="${esc(p.sport+"|"+club)}">${esc(club)}</span>`:""}</div></div></div>`;
+  if(tags.length) h+=`<div class="tags" style="margin:14px 0">${tags.map(t=>`<span>${esc(t)}</span>`).join("")}</div>`;
+  const st=d.stats||[];
+  if(st.length) h+=`<h2 class="sec" style="margin-top:14px">Stats ${esc(d.statsLabel||"de la saison")}</h2><div class="kpis">${st.map(([k,v])=>`<div class="kpi"><small>${esc(k)}</small><b>${esc(v)}</b></div>`).join("")}</div>`;
+  if(d.bio) h+=`<div class="pcard"><p>${esc(d.bio)}</p>${d.updated?`<div class="meta" style="margin-top:8px">Fiche mise à jour : ${esc(fmtDay(d.updated))}</div>`:""}</div>`;
+  if(goals.length||apps.length){
+    h+=`<h2 class="sec">Dans nos matchs</h2>`;
+    h+=apps.sort((a,b)=>(b.r.date).localeCompare(a.r.date)).map(e=>{ const g=goals.filter(x=>x.r.id===e.r.id); return `<div class="box"><h3>${esc(fmtDay(e.r.date))}<small>${esc(e.r.competition||"")}</small></h3>${mrowHTML(e.r,{id:teamId(e.r.sport,e.team),sport:e.r.sport})}${g.length?`<div class="meta" style="margin-top:6px">⚽ ${g.map(x=>esc((x.e.min||"")+" "+(x.e.note||"")).trim()||"but").join(" · ")}</div>`:""}</div>`; }).join("");
+  }
+  if((d.palmares||[]).length) h+=`<h2 class="sec">Palmarès</h2><ul class="trophies">${d.palmares.map(t=>`<li>${esc(t)}</li>`).join("")}</ul>`;
+  if(arts.length) h+=`<h2 class="sec">Actus</h2><div class="grid">${arts.slice(0,6).map(a=>cardHTML(a)).join("")}</div>`;
+  if(!d.bio && !st.length && !apps.length && !arts.length) h+=emptyHTML("Fiche en construction","Les infos de ce joueur arrivent avec les prochaines mises à jour.");
+  if(d.sources) h+=`<div class="meta" style="margin-top:16px;font-size:12px">Sources : ${linkify(d.sources)}</div>`;
+  return h+`<div style="height:40px"></div>`;
+}
+function playerHits(q){ const n=norm(q); if(n.length<2) return []; return Object.values(playerIndex()).filter(p=>[...p.aliases].some(a=>norm(a).includes(n))).sort((a,b)=>(b.doc?1:0)-(a.doc?1:0) || b.events.length-a.events.length).slice(0,12); }
+function playerHitHTML(p){ const d=p.doc||{}; return `<div class="team-hit" data-go="${esc(p.id)}">${crestHTML({name:p.name,id:p.id},"round")}<div><b>${esc(p.name)}</b><span>${S(p.sport).e} ${esc([d.poste,d.club].filter(Boolean).join(" · ")||S(p.sport).n)}</span></div></div>`; }
 
 let qTimer=null;
 document.getElementById("q").addEventListener("input", e=>{
@@ -752,7 +810,8 @@ function render(){
   }
   else if(v==="recherche"){ h+=searchHTML(); }
   else if(v.startsWith("c-")){ h+=compPageHTML(v.slice(2)); }
-  else if(v.startsWith("t-")){ h+=teamPageHTML(v); }
+  else if(v.startsWith("t-")){ const pid="j-"+v.slice(2); h+= (playerIndex()[pid]&&playerIndex()[pid].doc) ? playerPageHTML(pid) : teamPageHTML(v); }
+  else if(v.startsWith("j-")){ h+=playerPageHTML(v); }
   else if(v==="palmares"){
     h+=`<h2 class="sec">🏆 Palmarès 1999 – 2026</h2><p class="meta" style="margin:-6px 0 12px">Les grandes finales et les champions de chaque année.</p>${palmaresHTML()}<div style="height:40px"></div>`;
   }
@@ -795,9 +854,9 @@ function openMatch(id){
     <div class="teams">${side(r.home)}<div class="big">${score}</div>${side(r.away)}</div>
     <div style="margin-top:10px">${statusHTML(r.status)}${d.stade?` <span class="meta">· 🏟️ ${esc(d.stade)}</span>`:""}</div></div>`;
   const evs=[...(d.buteurs||[]).map(e=>({...e,t:"⚽"})),...(d.cartons||[]).map(e=>({...e,t:e.type==="jaune"?"🟨":"🟥"}))].sort((a,b)=>parseInt(a.min)-parseInt(b.min));
-  if(evs.length) h+=`<div class="msec"><h4>Temps forts</h4>${evs.map(e=>`<div class="ev"><span class="l">${e.equipe==="home"?esc(e.t+" "+e.joueur+(e.note?" ("+e.note+")":"")):""}</span><span class="m">${esc(e.min||"")}</span><span>${e.equipe==="away"?esc(e.t+" "+e.joueur+(e.note?" ("+e.note+")":"")):""}</span></div>`).join("")}</div>`;
+  if(evs.length) h+=`<div class="msec"><h4>Temps forts</h4>${evs.map(e=>`<div class="ev"><span class="l">${e.equipe==="home"?`${e.t} <span class="link" data-go="${esc(playerId(r.sport,e.joueur))}">${esc(e.joueur)}</span>${e.note?" ("+esc(e.note)+")":""}`:""}</span><span class="m">${esc(e.min||"")}</span><span>${e.equipe==="away"?`${e.t} <span class="link" data-go="${esc(playerId(r.sport,e.joueur))}">${esc(e.joueur)}</span>${e.note?" ("+esc(e.note)+")":""}`:""}</span></div>`).join("")}</div>`;
   if(d.resume) h+=`<div class="msec"><h4>Le résumé</h4><p style="color:#d2d7e2;line-height:1.7">${esc(d.resume)}</p></div>`;
-  if(d.compos&&(d.compos.home||d.compos.away)) h+=`<div class="msec"><h4>Compositions</h4><div class="lineups"><div><b>${esc(r.home)}</b><ol>${(d.compos.home||[]).map(p=>`<li>${esc(p)}</li>`).join("")}</ol></div><div><b>${esc(r.away)}</b><ol>${(d.compos.away||[]).map(p=>`<li>${esc(p)}</li>`).join("")}</ol></div></div></div>`;
+  if(d.compos&&(d.compos.home||d.compos.away)) h+=`<div class="msec"><h4>Compositions</h4><div class="lineups"><div><b>${esc(r.home)}</b><ol>${(d.compos.home||[]).map(p=>`<li class="link" data-go="${esc(playerId(r.sport,p))}">${esc(p)}</li>`).join("")}</ol></div><div><b>${esc(r.away)}</b><ol>${(d.compos.away||[]).map(p=>`<li class="link" data-go="${esc(playerId(r.sport,p))}">${esc(p)}</li>`).join("")}</ol></div></div></div>`;
   if(d.stats) h+=`<div class="msec"><h4>Statistiques</h4>${Object.entries(d.stats).map(([kk,v])=>`<div class="ev"><span class="l">${esc(v[0])}</span><span class="m">${esc(kk)}</span><span>${esc(v[1])}</span></div>`).join("")}</div>`;
   if(!evs.length&&!d.resume&&!d.compos&&!d.stats) h+=`<div class="msec"><p class="meta">${r.status==="soon"?"Le match n'a pas encore eu lieu. Les détails arriveront le lendemain matin.":"Pas de détails pour ce match : ils sont ajoutés pour les plus grosses affiches."}</p></div>`;
   if(d.sources) h+=`<div class="msec src" style="font-size:12px;color:var(--muted)">Sources : ${linkify(d.sources)}</div>`;
@@ -836,12 +895,12 @@ const h0=location.hash.slice(1); if(validView(h0)) state.view=h0;
 render();
 async function getJSON(p){ try{ const r=await fetch(p+"?v="+Date.now()); if(!r.ok) return []; return await r.json(); }catch(e){ return null; } }
 (async()=>{
-  const [a,r,ar,c]=await Promise.all([getJSON("data/articles.json"),getJSON("data/results.json"),getJSON("data/archive.json"),getJSON("data/competitions.json")]);
+  const [a,r,ar,c,pl]=await Promise.all([getJSON("data/articles.json"),getJSON("data/results.json"),getJSON("data/archive.json"),getJSON("data/competitions.json"),getJSON("data/players.json")]);
   if(a===null) showNotice("Impossible de charger les données. Mets le site en ligne pour qu'il fonctionne (voir README).");
   const o={live:0,fin:1,soon:2};
   state.articles=(a||[]).sort((x,y)=>y.createdAt-x.createdAt);
   state.results=(r||[]).sort((x,y)=>(y.date||"").localeCompare(x.date||"")||(o[x.status]-o[y.status])||((x.competition||"").localeCompare(y.competition||"")));
-  state.archive=ar||[]; state.comps=c||[];
+  state.archive=ar||[]; state.comps=c||[]; state.players=pl||[];
   state.loadedA=state.loadedR=true; render();
 })();
 

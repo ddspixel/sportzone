@@ -14,12 +14,12 @@ const h0=location.hash.slice(1); if(validView(h0)) state.view=h0;
 render();
 async function getJSON(p){ try{ const r=await fetch(p+"?v="+Date.now()); if(!r.ok) return []; return await r.json(); }catch(e){ return null; } }
 (async()=>{
-  const [a,r,ar,c]=await Promise.all([getJSON("data/articles.json"),getJSON("data/results.json"),getJSON("data/archive.json"),getJSON("data/competitions.json")]);
+  const [a,r,ar,c,pl]=await Promise.all([getJSON("data/articles.json"),getJSON("data/results.json"),getJSON("data/archive.json"),getJSON("data/competitions.json"),getJSON("data/players.json")]);
   if(a===null) showNotice("Impossible de charger les données. Mets le site en ligne pour qu'il fonctionne (voir README).");
   const o={live:0,fin:1,soon:2};
   state.articles=(a||[]).sort((x,y)=>y.createdAt-x.createdAt);
   state.results=(r||[]).sort((x,y)=>(y.date||"").localeCompare(x.date||"")||(o[x.status]-o[y.status])||((x.competition||"").localeCompare(y.competition||"")));
-  state.archive=ar||[]; state.comps=c||[];
+  state.archive=ar||[]; state.comps=c||[]; state.players=pl||[];
   state.loadedA=state.loadedR=true; render();
 })();
 
