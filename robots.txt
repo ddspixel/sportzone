@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://sportzone-8lam.netlify.app/sitemap.xml
