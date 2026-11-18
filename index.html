@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SportZone — Actus & Résultats sport</title>
+<meta name="description" content="SportZone : l'actu sport du jour, les résultats, calendriers et classements de foot, basket, tennis, rugby, F1, MMA et 95 compétitions, plus le palmarès depuis 1999.">
+<!-- ADSENSE : colle ici la ligne <script async src="https://pagead2.googlesyndication.com/..."> donnée par Google -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0c11; --panel:#12161f; --panel2:#1a1f2c; --line:#232a3a;
+  --text:#f2f4f8; --muted:#8a93a8; --accent:#c6ff3d; --hot:#ff4b2b; --live:#ff2d55; --r:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif;line-height:1.5;min-height:100vh}
+a{color:inherit}
+button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+input,select,textarea{font:inherit;color:var(--text);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;width:100%}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--accent);border-color:transparent}
+.wrap{max-width:1240px;margin:0 auto;padding:0 18px}
+.bebas{font-family:'Bebas Neue';letter-spacing:.5px}
+
+/* --- Top bar --- */
+.topbar{background:#05070a;border-bottom:1px solid var(--line);font-size:12px;color:var(--muted)}
+.topbar .wrap{display:flex;justify-content:space-between;align-items:center;height:32px;gap:12px}
+.topbar .today{text-transform:capitalize}
+.publish{background:var(--accent);color:#0a0c11;font-weight:800;padding:5px 12px;border-radius:999px;font-size:12px;display:none}
+.publish.show{display:inline-block}
+
+/* --- Masthead + nav --- */
+header{position:sticky;top:0;z-index:30;background:rgba(10,12,17,.96);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.mast{display:flex;align-items:center;gap:22px;height:62px}
+.logo{font-family:'Bebas Neue';font-size:38px;line-height:1;cursor:pointer;display:flex;align-items:center;gap:8px;flex-shrink:0}
+.logo .mk{width:30px;height:30px;border-radius:8px;background:var(--accent);color:#0a0c11;display:grid;place-items:center;font-size:22px;transform:skewX(-8deg)}
+.logo span{color:var(--accent)}
+nav{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;flex:1}
+nav::-webkit-scrollbar{display:none}
+nav button{padding:8px 12px;font-weight:700;font-size:14px;color:var(--muted);white-space:nowrap;border-radius:8px;position:relative}
+nav button:hover{color:var(--text);background:var(--panel)}
+nav button.on{color:var(--text)}
+nav button.on::after{content:"";position:absolute;left:12px;right:12px;bottom:-11px;height:3px;background:var(--accent);border-radius:3px}
+
+/* --- Scores strip --- */
+.scores{background:var(--panel);border-bottom:1px solid var(--line)}
+.scores .wrap{display:flex;align-items:stretch;gap:0;overflow-x:auto;scrollbar-width:thin;padding:0}
+.scores .lab{flex-shrink:0;display:flex;flex-direction:column;justify-content:center;padding:8px 14px;border-right:1px solid var(--line);font-family:'Bebas Neue';font-size:18px;color:var(--accent);line-height:1}
+.scores .lab small{font-family:Inter;font-size:10px;color:var(--muted);font-weight:600;margin-top:3px}
+.sc-card{flex-shrink:0;min-width:168px;padding:8px 12px;border-right:1px solid var(--line);font-size:12px;cursor:pointer}
+.sc-card:hover{background:var(--panel2)}
+.sc-card .c{color:var(--muted);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:170px}
+.sc-card .t{display:flex;justify-content:space-between;gap:10px;font-weight:600;white-space:nowrap}
+.sc-card .t b{font-weight:800}
+.sc-card .t.l{color:var(--muted)}
+
+/* --- Flash --- */
+.flash{display:flex;align-items:center;gap:12px;margin:18px 0 0;background:linear-gradient(90deg,rgba(255,75,43,.16),transparent);border-left:4px solid var(--hot);padding:9px 14px;border-radius:0 10px 10px 0;cursor:pointer}
+.flash .b{background:var(--hot);color:#fff;font-weight:900;font-size:11px;padding:3px 8px;border-radius:4px;letter-spacing:.5px;flex-shrink:0;animation:pulse 1.6s infinite}
+.flash .x{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@keyframes pulse{50%{opacity:.6}}
+
+/* --- Layout --- */
+.top-grid{display:grid;grid-template-columns:1fr 340px;gap:22px;margin-top:18px}
+.layout{display:grid;grid-template-columns:1fr 340px;gap:26px;margin-top:8px;padding-bottom:60px}
+@media(max-width:980px){.top-grid,.layout{grid-template-columns:1fr}}
+
+h2.sec{font-family:'Bebas Neue';font-size:30px;margin:34px 0 14px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--line);padding-bottom:8px}
+h2.sec .ic{font-size:22px}
+h2.sec .more{margin-left:auto;font-family:Inter;font-size:13px;font-weight:700;color:var(--accent)}
+h2.sec .more:hover{text-decoration:underline}
+
+/* --- Cover --- */
+.cover{background-size:cover;background-position:center;position:relative}
+
+/* --- Hero --- */
+.hero{position:relative;border-radius:var(--r);overflow:hidden;min-height:430px;display:flex;align-items:flex-end;cursor:pointer;background:var(--panel)}
+.hero .cover{position:absolute;inset:0;transition:transform .6s}
+.hero:hover .cover{transform:scale(1.03)}
+.hero .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 20%,rgba(0,0,0,.9) 85%)}
+.hero .txt{position:relative;padding:26px 28px}
+.hero h1{font-size:34px;line-height:1.1;font-weight:900;margin:10px 0;letter-spacing:-.5px}
+.hero p{color:#d4d9e4;max-width:640px;font-size:16px}
+@media(max-width:600px){.hero h1{font-size:25px}.hero{min-height:340px}}
+.kicker{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.7px;color:#0a0c11;background:var(--accent);padding:3px 8px;border-radius:4px}
+.kicker.hot{background:var(--hot);color:#fff}
+.meta{font-size:12px;color:var(--muted)}
+
+/* --- Fil info --- */
+.fil{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);display:flex;flex-direction:column;max-height:430px}
+.fil h3{font-family:'Bebas Neue';font-size:24px;padding:14px 16px 8px;display:flex;align-items:center;gap:8px}
+.fil h3 i{width:8px;height:8px;border-radius:50%;background:var(--live);animation:pulse 1.4s infinite}
+.fil ul{list-style:none;overflow:auto;padding:0 6px 10px}
+.fil li{display:grid;grid-template-columns:46px 1fr;gap:10px;padding:10px;border-radius:8px;cursor:pointer;border-bottom:1px solid var(--line)}
+.fil li:last-child{border-bottom:0}
+.fil li:hover{background:var(--panel2)}
+.fil .h{font-size:12px;font-weight:800;color:var(--accent)}
+.fil .tt{font-size:14px;font-weight:600;line-height:1.3}
+.fil .sp{font-size:11px;color:var(--muted);margin-top:2px}
+
+/* --- Cards --- */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:18px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;cursor:pointer;display:flex;flex-direction:column;transition:border-color .2s,transform .2s;position:relative}
+.card:hover{border-color:#3a4258;transform:translateY(-2px)}
+.card .cover{height:150px}
+.card .body{padding:13px 15px 15px;display:flex;flex-direction:column;gap:6px;flex:1}
+.card h4{font-size:16px;line-height:1.25;font-weight:800}
+.card p{color:var(--muted);font-size:13.5px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.card .meta{margin-top:auto}
+.sport-block{display:grid;grid-template-columns:1.4fr 1fr;gap:18px}
+@media(max-width:760px){.sport-block{grid-template-columns:1fr}}
+.sport-block .big .cover{height:250px}
+.sport-block .big h4{font-size:21px}
+.mini{display:grid;grid-template-columns:110px 1fr;gap:12px;cursor:pointer;padding:8px;border-radius:10px;position:relative}
+.mini:hover{background:var(--panel)}
+.mini .cover{height:74px;border-radius:8px}
+.mini h5{font-size:14.5px;line-height:1.3;font-weight:700}
+.stack{display:flex;flex-direction:column;gap:4px}
+
+/* --- Results --- */
+.box{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:18px}
+.box h3{font-family:'Bebas Neue';font-size:24px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:baseline}
+.box h3 small{font-family:Inter;font-size:12px;color:var(--muted);font-weight:600;text-transform:capitalize}
+.compet{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin:12px 0 4px;display:flex;align-items:center;gap:6px}
+.mrow{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;padding:7px 4px;border-bottom:1px solid var(--line);font-size:13.5px;position:relative}
+.mrow:last-child{border-bottom:0}
+.mrow .a{text-align:right;font-weight:600}
+.mrow .b{font-weight:600}
+.mrow .s{font-family:'Bebas Neue';font-size:20px;background:var(--panel2);padding:2px 9px;border-radius:6px;min-width:62px;text-align:center;line-height:1.2}
+.mrow .w{color:var(--text)} .mrow .l{color:var(--muted)}
+.rgroup{margin-bottom:22px}
+.rdate{font-family:'Bebas Neue';font-size:24px;color:var(--accent);margin-bottom:6px;text-transform:capitalize}
+.resgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.res{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;position:relative}
+.res .comp{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--muted);font-weight:700;margin-bottom:8px;gap:8px}
+.row{display:flex;justify-content:space-between;align-items:center;font-weight:600;padding:2px 0}
+.row .sc{font-family:'Bebas Neue';font-size:24px;line-height:1;min-width:28px;text-align:right}
+.row.win{color:var(--text)} .row.lose{color:var(--muted)}
+.status{font-size:10px;font-weight:800;padding:2px 8px;border-radius:999px;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
+.st-fin{background:var(--panel2);color:var(--muted)}
+.st-live{background:var(--live);color:#fff;animation:pulse 1.4s infinite}
+.st-soon{background:rgba(198,255,61,.12);color:var(--accent)}
+
+/* --- Misc --- */
+.del{position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:50%;background:rgba(0,0,0,.7);color:#fff;font-size:13px;display:none;align-items:center;justify-content:center;z-index:3}
+body.editor .del{display:flex}
+.mrow .del{top:50%;right:-6px;transform:translateY(-50%);width:22px;height:22px;font-size:11px}
+.empty{background:var(--panel);border:1px dashed var(--line);border-radius:var(--r);padding:30px 20px;text-align:center;color:var(--muted)}
+.empty b{display:block;color:var(--text);font-size:17px;margin-bottom:4px}
+.notice{background:rgba(255,75,43,.12);border:1px solid rgba(255,75,43,.4);color:#ffb4a3;padding:10px 14px;border-radius:10px;font-size:14px;margin-top:14px;display:none}
+.notice.show{display:block}
+.sport-head{margin-top:26px;border-radius:var(--r);overflow:hidden;position:relative;height:150px;display:flex;align-items:flex-end}
+.sport-head .cover{position:absolute;inset:0}
+.sport-head .shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.85),rgba(0,0,0,.2))}
+.sport-head h1{position:relative;font-family:'Bebas Neue';font-size:56px;padding:0 24px 14px;line-height:1}
+.chipbar{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 14px}
+.chip{padding:6px 13px;border-radius:999px;border:1px solid var(--line);font-size:13px;font-weight:600;color:var(--muted)}
+.chip.on{border-color:var(--accent);color:var(--accent);background:rgba(198,255,61,.08)}
+
+/* --- Modal --- */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:50;display:none;align-items:flex-start;justify-content:center;padding:36px 14px;overflow:auto}
+.overlay.show{display:flex}
+.modal{background:var(--panel);border:1px solid var(--line);border-radius:16px;width:100%;max-width:640px;overflow:hidden}
+.modal .mh{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--line)}
+.modal .mh h3{font-family:'Bebas Neue';font-size:26px}
+.x{font-size:22px;color:var(--muted);width:34px;height:34px;border-radius:50%}
+.x:hover{background:var(--panel2)}
+.mb{padding:20px}
+.tabs{display:flex;gap:6px;background:var(--bg);padding:4px;border-radius:12px;margin-bottom:18px}
+.tabs button{flex:1;padding:9px;border-radius:9px;font-weight:700;color:var(--muted)}
+.tabs button.on{background:var(--panel2);color:var(--text)}
+.f{margin-bottom:14px}
+.f label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.team{display:grid;grid-template-columns:1fr 90px;gap:10px}
+.btn{background:var(--accent);color:#0a0c11;font-weight:800;padding:12px 18px;border-radius:12px;width:100%;font-size:15px}
+.btn:disabled{opacity:.5;cursor:wait}
+.preview{margin-top:8px;border-radius:10px;max-height:160px;display:none}
+.msg{font-size:14px;margin-top:10px;text-align:center}
+.article{max-width:760px}
+.article .cover{height:300px}
+.article h1{font-size:30px;line-height:1.15;font-weight:900;margin:12px 0 8px;letter-spacing:-.4px}
+.article .chapo{font-size:18px;font-weight:600;color:#dfe3ec;margin:14px 0}
+.article .content p{margin:0 0 14px;color:#d2d7e2;font-size:16.5px;line-height:1.7}
+.article .content a{color:var(--accent);word-break:break-all}
+.article .src{font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:12px;margin-top:8px}
+.related{border-top:1px solid var(--line);padding:16px 20px}
+.related h4{font-family:'Bebas Neue';font-size:20px;margin-bottom:8px}
+
+/* --- Search --- */
+.search{position:relative;flex-shrink:0;width:230px}
+.search input{padding:8px 12px 8px 34px;border-radius:999px;background:var(--panel);font-size:14px}
+.search::before{content:"🔍";position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:13px;opacity:.7}
+@media(max-width:900px){.mast{flex-wrap:wrap;height:auto;padding:8px 18px;gap:8px}.search{width:100%;order:3}nav{order:4;width:100%}}
+.hit{display:flex;gap:12px;align-items:center;padding:10px 12px;border-bottom:1px solid var(--line);cursor:pointer;border-radius:8px}
+.hit:hover{background:var(--panel2)}
+.hit .ic{font-size:22px;width:30px;text-align:center}
+.hit .t{font-weight:700}
+.hit .s{font-size:12px;color:var(--muted)}
+mark{background:rgba(198,255,61,.25);color:inherit;border-radius:3px;padding:0 2px}
+/* --- Compétitions --- */
+.comp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.comp-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;cursor:pointer;display:flex;gap:12px;align-items:center;transition:border-color .2s}
+.comp-card:hover{border-color:var(--accent)}
+.comp-card .ic{width:44px;height:44px;border-radius:10px;display:grid;place-items:center;font-size:22px;flex-shrink:0}
+.comp-card b{display:block;font-size:15px}
+.comp-card span{font-size:12px;color:var(--muted)}
+.ctabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin:18px 0 16px;overflow-x:auto}
+.ctabs button{padding:10px 14px;font-weight:700;color:var(--muted);border-bottom:3px solid transparent;white-space:nowrap}
+.ctabs button.on{color:var(--text);border-color:var(--accent)}
+table.std{width:100%;border-collapse:collapse;font-size:14px}
+table.std th{font-size:11px;color:var(--muted);text-transform:uppercase;text-align:right;padding:8px 6px;border-bottom:1px solid var(--line)}
+table.std td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:right}
+table.std td.tm,table.std th.tm{text-align:left;font-weight:700}
+table.std td.p{width:30px;text-align:center;color:var(--muted);font-weight:700}
+table.std tr:nth-child(-n+4) td.p{color:var(--accent)}
+table.std td.pts{font-weight:900}
+.factbox{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin:14px 0}
+.factbox div{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.factbox small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;font-weight:700}
+.factbox b{font-size:15px}
+.link{cursor:pointer} .link:hover{text-decoration:underline}
+.cookie{position:fixed;left:12px;right:12px;bottom:12px;z-index:60;background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;font-size:14px;box-shadow:0 10px 30px rgba(0,0,0,.5)}
+.cookie a{color:var(--accent)} .cookie button{padding:8px 14px;border-radius:8px;font-weight:700;border:1px solid var(--line)} .cookie .ok{background:var(--accent);color:#0a0c11;border:0}
+.pub{margin:22px 0}
+footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;padding:30px 0;margin-top:20px}
+footer .wrap{display:flex;flex-wrap:wrap;gap:30px;justify-content:space-between}
+footer .logo{font-size:30px}
+footer .cols{display:flex;gap:40px;flex-wrap:wrap}
+footer .cols div{display:flex;flex-direction:column;gap:5px}
+footer .cols b{color:var(--text);margin-bottom:3px}
+footer button{text-align:left;color:var(--muted)} footer button:hover{color:var(--text)}
+</style>
+</head>
+<body>
+
+<div class="topbar"><div class="wrap">
+  <span class="today" id="today"></span>
+  <span style="display:flex;gap:12px;align-items:center"><span id="updated"></span></span>
+</div></div>
+
+<header>
+  <div class="wrap mast">
+    <div class="logo" data-go="home"><div class="mk">⚡</div>SPORT<span>ZONE</span></div>
+    <nav id="nav"></nav>
+    <div class="search"><input id="q" type="search" placeholder="Équipe, joueur, compétition…" autocomplete="off"></div>
+  </div>
+  <div class="scores" id="scores" style="display:none"><div class="wrap" id="scoresIn"></div></div>
+</header>
+
+<main class="wrap">
+  <div class="notice" id="notice"></div>
+  <div id="view"></div>
+</main>
+
+<footer><div class="wrap">
+  <div><div class="logo" data-go="home"><div class="mk">⚡</div>SPORT<span>ZONE</span></div>
+  <p style="margin-top:8px;max-width:300px">Toute l'actu sport et les résultats, mis à jour chaque jour.</p><p style="margin-top:8px"><a href="mentions-legales.html">Mentions légales et cookies</a></p></div>
+  <div class="cols" id="footCols"></div>
+</div></footer>
+
+<!-- Lire un article -->
+<div class="overlay" id="readOverlay"><div class="modal article" id="readBox"></div></div>
+
+<script>
+const SPORTS = {
+  foot:{n:"Football",e:"⚽",c1:"#1d7a3e",c2:"#0d3b1f"},
+  basket:{n:"Basket",e:"🏀",c1:"#c4651c",c2:"#5a2a0a"},
+  tennis:{n:"Tennis",e:"🎾",c1:"#c25a2b",c2:"#5c2210"},
+  rugby:{n:"Rugby",e:"🏉",c1:"#2a6b3a",c2:"#123018"},
+  f1:{n:"F1",e:"🏎️",c1:"#2a2f3a",c2:"#0b0d12"},
+  velo:{n:"Cyclisme",e:"🚴",c1:"#c9a227",c2:"#4a3a0a"},
+  hand:{n:"Handball",e:"🤾",c1:"#2b5fb3",c2:"#0f2550"},
+  mma:{n:"MMA",e:"🥋",c1:"#8a1a1a",c2:"#2a0606"},
+  combat:{n:"Boxe",e:"🥊",c1:"#9b1c2c",c2:"#2e060c"},
+  hockey:{n:"Hockey sur glace",e:"🏒",c1:"#5b8fc9",c2:"#13294a"},
+  amfoot:{n:"Football américain",e:"🏈",c1:"#3f7a2a",c2:"#162b0e"},
+  baseball:{n:"Baseball",e:"⚾",c1:"#b07a3a",c2:"#3d2610"},
+  volley:{n:"Volley",e:"🏐",c1:"#d08a1a",c2:"#4a2c05"},
+  auto:{n:"Auto / Moto",e:"🏁",c1:"#44464f",c2:"#0d0e12"},
+  golf:{n:"Golf",e:"⛳",c1:"#3c8f4a",c2:"#123a1a"},
+  athle:{n:"Athlétisme",e:"🏃",c1:"#b8432f",c2:"#45140b"},
+  ski:{n:"Sports d'hiver",e:"⛷️",c1:"#7fa9d6",c2:"#1d3554"},
+  autre:{n:"Omnisport",e:"🏅",c1:"#3a4258",c2:"#11151f"}
+};
+const NAV = ["foot","basket","tennis","rugby","f1","velo","mma","hand"];
+const S = k => SPORTS[k] || SPORTS.autre;
+
+const state = { articles:[], results:[], archive:[], comps:[], q:"", ctab:"cal", year:"all", view:"home", loadedA:false, loadedR:false };
+let db=null, canWrite=false;
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const iso = d => d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+const todayISO = () => iso(new Date());
+$("#today").textContent = new Date().toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+
+function fmtDay(d){
+  if(!d) return "";
+  const y=new Date(); y.setDate(y.getDate()-1);
+  if(d===todayISO()) return "Aujourd'hui";
+  if(d===iso(y)) return "Hier";
+  const dt=new Date(d+"T12:00:00"); const o={weekday:"long",day:"numeric",month:"long"};
+  if(dt.getFullYear()!==new Date().getFullYear()) o.year="numeric";
+  return dt.toLocaleDateString("fr-FR",o);
+}
+function hhmm(ms){ return new Date(ms).toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"}); }
+function ago(ms){
+  const m=Math.round((Date.now()-ms)/60000);
+  if(m<1) return "à l'instant"; if(m<60) return "il y a "+m+" min";
+  const h=Math.round(m/60); if(h<24) return "il y a "+h+" h";
+  return new Date(ms).toLocaleDateString("fr-FR",{day:"numeric",month:"long"});
+}
+
+/* ---------- Couvertures illustrées (SVG générés) ---------- */
+function hash(s){ let h=0; for(const c of String(s)) h=(h*31+c.charCodeAt(0))|0; return Math.abs(h); }
+const coverCache={};
+function coverURL(sport, seed){
+  const key=sport+"|"+(hash(seed)%6);
+  if(coverCache[key]) return coverCache[key];
+  const sp=S(sport), v=hash(seed)%6, W=800,H=450, L='stroke="rgba(255,255,255,.55)" stroke-width="4" fill="none"';
+  let art="";
+  if(sport==="foot") art=`<rect x="40" y="40" width="720" height="370" ${L}/><line x1="400" y1="40" x2="400" y2="410" ${L}/><circle cx="400" cy="225" r="70" ${L}/><rect x="40" y="135" width="110" height="180" ${L}/><rect x="650" y="135" width="110" height="180" ${L}/><circle cx="400" cy="225" r="6" fill="rgba(255,255,255,.6)"/>`;
+  else if(sport==="basket") art=`<rect x="40" y="40" width="720" height="370" ${L}/><line x1="400" y1="40" x2="400" y2="410" ${L}/><circle cx="400" cy="225" r="60" ${L}/><path d="M40 70 H130 A155 155 0 0 1 130 380 H40" ${L}/><path d="M760 70 H670 A155 155 0 0 0 670 380 H760" ${L}/><rect x="40" y="165" width="150" height="120" ${L}/><rect x="610" y="165" width="150" height="120" ${L}/>`;
+  else if(sport==="tennis") art=`<rect x="70" y="60" width="660" height="330" ${L}/><line x1="70" y1="100" x2="730" y2="100" ${L}/><line x1="70" y1="350" x2="730" y2="350" ${L}/><line x1="400" y1="60" x2="400" y2="390" stroke="rgba(255,255,255,.85)" stroke-width="6"/><line x1="230" y1="100" x2="230" y2="350" ${L}/><line x1="570" y1="100" x2="570" y2="350" ${L}/><line x1="230" y1="225" x2="570" y2="225" ${L}/>`;
+  else if(sport==="rugby") art=`<line x1="0" y1="80" x2="800" y2="80" ${L}/><line x1="0" y1="370" x2="800" y2="370" ${L}/><line x1="400" y1="0" x2="400" y2="450" ${L}/><line x1="200" y1="0" x2="200" y2="450" ${L} stroke-dasharray="14 12"/><line x1="600" y1="0" x2="600" y2="450" ${L} stroke-dasharray="14 12"/><path d="M90 380 V140 M150 380 V140 M90 260 H150" stroke="rgba(255,255,255,.75)" stroke-width="7"/>`;
+  else if(sport==="f1") { let ch=""; for(let i=0;i<20;i++) for(let j=0;j<3;j++) if((i+j)%2===0) ch+=`<rect x="${i*40}" y="${190+j*24}" width="40" height="24" fill="rgba(255,255,255,.75)"/>`; art=ch+`<path d="M0 120 Q400 40 800 140" stroke="rgba(255,60,60,.7)" stroke-width="10" fill="none" stroke-dasharray="30 20"/><path d="M0 350 Q400 430 800 330" stroke="rgba(255,255,255,.5)" stroke-width="10" fill="none" stroke-dasharray="30 20"/>`; }
+  else if(sport==="velo") art=`<path d="M-20 460 L330 0 M820 460 L470 0" stroke="rgba(0,0,0,.35)" stroke-width="40"/><path d="M400 450 L400 0" stroke="rgba(255,255,255,.8)" stroke-width="8" stroke-dasharray="40 30"/><circle cx="640" cy="110" r="60" fill="rgba(255,240,180,.35)"/>`;
+  else if(sport==="mma"||sport==="combat") art=`<polygon points="400,40 540,98 598,225 540,352 400,410 260,352 202,225 260,98" ${L}/><polygon points="400,90 505,134 548,225 505,316 400,360 295,316 252,225 295,134" stroke="rgba(255,255,255,.3)" stroke-width="3" fill="none"/>`;
+  else if(sport==="hand") art=`<rect x="40" y="40" width="720" height="370" ${L}/><line x1="400" y1="40" x2="400" y2="410" ${L}/><path d="M40 105 A120 120 0 0 1 40 345" ${L} transform="translate(0,0) scale(1,1)"/><path d="M40 75 A160 150 0 0 1 200 225 A160 150 0 0 1 40 375" ${L}/><path d="M760 75 A160 150 0 0 0 600 225 A160 150 0 0 0 760 375" ${L}/>`;
+  else if(sport==="hockey") art=`<rect x="40" y="40" width="720" height="370" rx="120" ${L}/><line x1="400" y1="40" x2="400" y2="410" stroke="rgba(255,80,80,.7)" stroke-width="6"/><line x1="260" y1="40" x2="260" y2="410" stroke="rgba(80,140,255,.7)" stroke-width="6"/><line x1="540" y1="40" x2="540" y2="410" stroke="rgba(80,140,255,.7)" stroke-width="6"/><circle cx="400" cy="225" r="55" ${L}/>`;
+  else if(sport==="amfoot") { let y=""; for(let i=1;i<10;i++) y+=`<line x1="${40+i*72}" y1="40" x2="${40+i*72}" y2="410" ${L}/>`; art=`<rect x="40" y="40" width="720" height="370" ${L}/>${y}<rect x="40" y="40" width="72" height="370" fill="rgba(255,255,255,.12)"/><rect x="688" y="40" width="72" height="370" fill="rgba(255,255,255,.12)"/>`; }
+  else if(sport==="baseball") art=`<path d="M400 400 L560 240 L400 80 L240 240 Z" ${L}/><path d="M400 400 L780 20 M400 400 L20 20" ${L}/><circle cx="400" cy="250" r="22" ${L}/>`;
+  else if(sport==="volley") art=`<rect x="60" y="80" width="680" height="290" ${L}/><line x1="400" y1="40" x2="400" y2="410" stroke="rgba(255,255,255,.85)" stroke-width="8" stroke-dasharray="4 6"/><line x1="290" y1="80" x2="290" y2="370" ${L}/><line x1="510" y1="80" x2="510" y2="370" ${L}/>`;
+  else if(sport==="auto") { let ch=""; for(let i=0;i<20;i++) for(let j=0;j<2;j++) if((i+j)%2===0) ch+=`<rect x="${i*40}" y="${200+j*25}" width="40" height="25" fill="rgba(255,255,255,.7)"/>`; art=ch+`<path d="M-20 380 C200 300 600 460 820 360" stroke="rgba(255,200,0,.6)" stroke-width="12" fill="none"/>`; }
+  else if(sport==="golf") art=`<ellipse cx="420" cy="300" rx="260" ry="90" fill="rgba(255,255,255,.12)"/><line x1="460" y1="300" x2="460" y2="90" stroke="rgba(255,255,255,.85)" stroke-width="6"/><path d="M460 90 L570 120 L460 150 Z" fill="rgba(255,70,70,.8)"/><circle cx="460" cy="300" r="10" fill="rgba(0,0,0,.4)"/>`;
+  else if(sport==="athle") { let l=""; for(let i=0;i<7;i++) l+=`<path d="M-20 ${120+i*45} Q400 ${40+i*45} 820 ${120+i*45}" ${L}/>`; art=l; }
+  else if(sport==="ski") art=`<path d="M0 420 L260 120 L380 260 L520 60 L800 420 Z" fill="rgba(255,255,255,.25)"/><path d="M260 120 L300 170 L230 160 Z M520 60 L570 130 L480 120 Z" fill="rgba(255,255,255,.8)"/><path d="M180 420 Q330 300 450 340 T700 230" stroke="rgba(255,255,255,.6)" stroke-width="5" fill="none" stroke-dasharray="12 10"/>`;
+  else art=`<circle cx="400" cy="225" r="150" ${L}/><circle cx="400" cy="225" r="90" ${L}/>`;
+  const rot=[0,-6,6,-3,3,0][v], sc=[1,1.08,1.12,1.04,1.15,1.2][v], gx=[20,80,50,10,90,60][v];
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice">
+    <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${sp.c1}"/><stop offset="1" stop-color="${sp.c2}"/></linearGradient>
+    <radialGradient id="l" cx="${gx}%" cy="10%" r="80%"><stop offset="0" stop-color="rgba(255,255,255,.28)"/><stop offset="1" stop-color="rgba(255,255,255,0)"/></radialGradient>
+    <pattern id="p" width="80" height="450" patternUnits="userSpaceOnUse"><rect width="40" height="450" fill="rgba(255,255,255,.035)"/></pattern></defs>
+    <rect width="${W}" height="${H}" fill="url(#g)"/><rect width="${W}" height="${H}" fill="url(#p)"/>
+    <g transform="rotate(${rot} 400 225) translate(400 225) scale(${sc}) translate(-400 -225)">${art}</g>
+    <rect width="${W}" height="${H}" fill="url(#l)"/>
+    <text x="${v%2? 690:110}" y="${v%3? 395:120}" font-size="120" text-anchor="middle" opacity=".22">${sp.e}</text></svg>`;
+  return coverCache[key]="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(svg);
+}
+function coverStyle(a){
+  const u = a.image ? a.image : coverURL(a.sport, a.id||a.title);
+  return `background-image:url('${u.replace(/'/g,"%27")}')`;
+}
+
+/* ---------- Nav ---------- */
+function renderNav(){
+  let h=`<button data-go="home" class="${state.view==="home"?"on":""}">À la une</button>`;
+  NAV.forEach(k=> h+=`<button data-go="${k}" class="${state.view===k?"on":""}">${S(k).n}</button>`);
+  h+=`<button data-go="autres" class="${state.view==="autres"?"on":""}">Autres sports</button>`;
+  h+=`<button data-go="competitions" class="${state.view==="competitions"||state.view.startsWith("c-")?"on":""}">Compétitions</button>`;
+  h+=`<button data-go="results" class="${state.view==="results"?"on":""}">Résultats</button>`;
+  h+=`<button data-go="palmares" class="${state.view==="palmares"?"on":""}">Palmarès</button>`;
+  $("#nav").innerHTML=h;
+  let f=`<div><b>Rubriques</b>${NAV.map(k=>`<button data-go="${k}">${S(k).n}</button>`).join("")}</div>
+         <div><b>Services</b><button data-go="competitions">Compétitions</button><button data-go="results">Résultats</button><button data-go="palmares">Palmarès 1999–2026</button><button data-go="home">À la une</button></div>`;
+  $("#footCols").innerHTML=f;
+}
+function go(v){
+  if(v.startsWith("c-") && v!==state.view) state.ctab="cal";
+  state.view=v;
+  try{ history.replaceState(null,"", v==="home" ? location.pathname : "#"+v); }catch(e){}
+  render(); window.scrollTo({top:0});
+}
+window.addEventListener("hashchange", ()=>{ const h=location.hash.slice(1); if(h && h!==state.view && validView(h)){ state.view=h; render(); } });
+const validView = v => ["home","results","palmares","competitions","recherche","autres",...Object.keys(SPORTS)].includes(v) || /^c-[a-z0-9-]+$/.test(v);
+
+/* ---------- Compétitions & recherche ---------- */
+const norm = s => String(s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
+function compOf(item){ // trouve la compétition d'un résultat / palmarès
+  const c=norm(item.competition); let best=null, bl=0;
+  state.comps.forEach(k=>{ if(k.sport!==item.sport) return; (k.match||[k.name]).forEach(m=>{ const n=norm(m); if(n && c.includes(n) && n.length>bl){ best=k; bl=n.length; } }); });
+  return best;
+}
+function compResults(k){ return state.results.filter(r=>compOf(r)===k); }
+function compArchive(k){
+  const out=[]; state.archive.slice().sort((a,b)=>b.year-a.year).forEach(y=>(y.items||[]).forEach(i=>{ if(compOf(i)===k) out.push({...i,year:y.year}); }));
+  return out;
+}
+function compCard(k){
+  return `<div class="comp-card" data-go="c-${esc(k.id)}"><div class="ic" style="background:linear-gradient(135deg,${S(k.sport).c1},${S(k.sport).c2})">${S(k.sport).e}</div>
+    <div><b>${esc(k.name)}</b><span>${esc(k.country||"")}</span></div></div>`;
+}
+function competitionsHTML(){
+  if(!state.comps.length) return `<h2 class="sec">Compétitions</h2>`+emptyHTML("Chargement…","");
+  let h=`<h2 class="sec">Toutes les compétitions <span class="meta" style="font-family:Inter;font-size:14px;margin-left:8px">${state.comps.length} compétitions</span></h2>
+    <div class="chipbar">${Object.keys(SPORTS).filter(sp=>state.comps.some(k=>k.sport===sp)).map(sp=>`<button class="chip" onclick="document.getElementById('sp-${sp}').scrollIntoView()">${S(sp).e} ${S(sp).n}</button>`).join("")}</div>`;
+  Object.keys(SPORTS).forEach(sp=>{
+    const list=state.comps.filter(k=>k.sport===sp).sort((a,b)=>(a.order||99)-(b.order||99));
+    if(!list.length) return;
+    h+=`<h3 class="bebas" id="sp-${sp}" style="font-size:24px;margin:22px 0 10px;scroll-margin-top:120px">${S(sp).e} ${S(sp).n}</h3><div class="comp-grid">${list.map(compCard).join("")}</div>`;
+  });
+  return h+`<div style="height:40px"></div>`;
+}
+function standingsHTML(k){
+  const st=k.standings||[];
+  if(!st.length) return emptyHTML("Classement bientôt disponible","Il est mis à jour automatiquement chaque matin.");
+  const cols=[["j","J"],["g","G"],["n","N"],["p","P"],["diff","Diff"]].filter(([f])=>st.some(r=>r[f]!==undefined && r[f]!==""));
+  return `${k.standingsTitle?`<p class="meta" style="margin-bottom:8px">${esc(k.standingsTitle)}</p>`:""}
+    <div class="box" style="padding:6px 10px;overflow-x:auto"><table class="std"><thead><tr><th class="p">#</th><th class="tm">${esc(k.standingsLabel||"Équipe")}</th>${cols.map(c=>`<th>${c[1]}</th>`).join("")}<th>Pts</th></tr></thead>
+    <tbody>${st.map((r,i)=>`<tr><td class="p">${esc(r.pos||i+1)}</td><td class="tm link" data-search="${esc(r.team)}">${esc(r.team)}</td>${cols.map(([f])=>`<td>${esc(r[f]??"")}</td>`).join("")}<td class="pts">${esc(r.pts??"")}</td></tr>`).join("")}</tbody></table></div>
+    ${k.standingsUpdated?`<p class="meta" style="margin-top:6px">Mis à jour : ${esc(fmtDay(k.standingsUpdated))}</p>`:""}`;
+}
+function compPageHTML(id){
+  const k=state.comps.find(c=>c.id===id);
+  if(!k) return state.comps.length ? emptyHTML("Compétition introuvable","") : emptyHTML("Chargement…","");
+  const rs=compResults(k), today=todayISO();
+  const cal=rs.filter(r=>r.status==="soon"||r.date>=today).sort((a,b)=>(a.date+(a.time||"")).localeCompare(b.date+(b.time||"")));
+  const past=rs.filter(r=>r.status!=="soon"&&r.date<today);
+  const pal=compArchive(k);
+  const arts=state.articles.filter(a=>norm(a.title+" "+a.summary).includes(norm(k.short||k.name)));
+  const tabs=[["cal","Calendrier"],["res","Résultats"],["std","Classement"],["pal","Palmarès"],["info","Présentation"]];
+  const t=state.ctab;
+  let body="";
+  const byDate=(list,rev)=>{ const by={}; list.forEach(r=>{(by[r.date] ||= []).push(r);}); return Object.keys(by).sort((a,b)=>rev?b.localeCompare(a):a.localeCompare(b)).map(d=>`<div class="box"><h3>${esc(fmtDay(d))}<small></small></h3>${by[d].map(r=>r.time&&r.status==="soon"?mrowHTML(r).replace('<span class="s">–</span>',`<span class="s">${esc(r.time)}</span>`):mrowHTML(r)).join("")}</div>`).join(""); };
+  if(t==="cal") body = cal.length ? byDate(cal,false) : emptyHTML("Pas de match programmé dans les 7 prochains jours","Le calendrier est mis à jour chaque matin.");
+  else if(t==="res") body = past.length ? byDate(past,true) : emptyHTML("Pas encore de résultats enregistrés","Ils arrivent chaque matin.");
+  else if(t==="std") body = standingsHTML(k);
+  else if(t==="pal") body = pal.length ? `<div class="resgrid">${pal.map(i=>archHTML({...i,competition:i.year+" · "+i.competition})).join("")}</div>` : emptyHTML("Pas de palmarès pour cette compétition","");
+  else body = `<div class="box"><p style="font-size:16px;line-height:1.7">${esc(k.description||"")}</p></div>
+    <div class="factbox">${(k.facts||[]).map(f=>`<div><small>${esc(f[0])}</small><b>${esc(f[1])}</b></div>`).join("")}</div>`;
+  return `<div class="sport-head"><div class="cover" style="background-image:url('${coverURL(k.sport,k.id)}')"></div><div class="shade"></div>
+      <h1>${S(k.sport).e} ${esc(k.name)}<div style="font-family:Inter;font-size:14px;font-weight:600;color:#cfd4e0;margin-top:6px">${esc(k.country||"")} · <span class="link" data-go="${k.sport}">${S(k.sport).n}</span></div></h1></div>
+    <div class="ctabs">${tabs.map(([id,l])=>`<button data-ctab="${id}" class="${t===id?"on":""}">${l}</button>`).join("")}</div>
+    <div class="layout" style="margin-top:0"><div>${body}</div>
+    <aside>${arts.length?`<h2 class="sec" style="margin-top:0">Actus</h2><div class="stack">${arts.slice(0,5).map(miniHTML).join("")}</div>`:""}
+      <h2 class="sec" style="${arts.length?"":"margin-top:0"}">Autres compétitions</h2><div class="stack">${state.comps.filter(c=>c.sport===k.sport&&c.id!==k.id).slice(0,8).map(c=>`<div class="hit" data-go="c-${esc(c.id)}"><span class="ic">${S(c.sport).e}</span><div><div class="t">${esc(c.name)}</div><div class="s">${esc(c.country||"")}</div></div></div>`).join("")}</div></aside></div>`;
+}
+function hl(text,q){ const t=esc(text); if(!q) return t; const i=norm(text).indexOf(norm(q)); if(i<0) return t; return esc(text.slice(0,i))+"<mark>"+esc(text.slice(i,i+q.length))+"</mark>"+esc(text.slice(i+q.length)); }
+function searchHTML(){
+  const q=state.q.trim(), n=norm(q);
+  let h=`<h2 class="sec">Recherche${q?` : « ${esc(q)} »`:""}</h2>`;
+  if(n.length<2) return h+emptyHTML("Tape au moins 2 lettres","Une équipe, un joueur, une compétition, un sport…");
+  const has=s=>norm(s).includes(n);
+  const sportHits=Object.entries(SPORTS).filter(([k,v])=>has(v.n));
+  const comps=state.comps.filter(k=>has(k.name)||has(k.country)||has(k.short)||(k.match||[]).some(has)||has(S(k.sport).n));
+  const arts=state.articles.filter(a=>has(a.title)||has(a.summary)||has(a.content));
+  const res=state.results.filter(r=>has(r.home)||has(r.away)||has(r.competition));
+  const pal=[]; state.archive.slice().sort((a,b)=>b.year-a.year).forEach(y=>(y.items||[]).forEach(i=>{ if(has(i.home)||has(i.away)||has(i.competition)) pal.push({...i,year:y.year}); }));
+  const teams={}; [...res,...pal].forEach(r=>[r.home,r.away].forEach(t=>{ if(t&&has(t)) teams[t]=(teams[t]||0)+1; }));
+  const tlist=Object.entries(teams).sort((a,b)=>b[1]-a[1]).slice(0,12);
+  let any=false;
+  if(sportHits.length||comps.length){ any=true; h+=`<h3 class="bebas" style="font-size:22px;margin:10px 0">Compétitions et sports</h3><div class="comp-grid">${sportHits.map(([k,v])=>`<div class="comp-card" data-go="${k}"><div class="ic" style="background:linear-gradient(135deg,${v.c1},${v.c2})">${v.e}</div><div><b>${hl(v.n,q)}</b><span>Toute l'actu</span></div></div>`).join("")}${comps.map(compCard).join("")}</div>`; }
+  if(tlist.length){ any=true; h+=`<h3 class="bebas" style="font-size:22px;margin:22px 0 10px">Équipes et joueurs</h3><div class="chipbar">${tlist.map(([t,c])=>`<button class="chip" data-search="${esc(t)}">${hl(t,q)} <span class="meta">(${c})</span></button>`).join("")}</div>`; }
+  if(arts.length){ any=true; h+=`<h3 class="bebas" style="font-size:22px;margin:22px 0 10px">Actus (${arts.length})</h3><div class="grid">${arts.slice(0,9).map(a=>cardHTML(a)).join("")}</div>`; }
+  if(res.length){ any=true; const by={}; res.slice(0,40).forEach(r=>{(by[r.date] ||= []).push(r);});
+    h+=`<h3 class="bebas" style="font-size:22px;margin:22px 0 10px">Résultats (${res.length})</h3>`+Object.keys(by).sort().reverse().map(d=>`<div class="box"><h3>${esc(fmtDay(d))}<small></small></h3>${byCompetition(by[d])}</div>`).join(""); }
+  if(pal.length){ any=true; h+=`<h3 class="bebas" style="font-size:22px;margin:22px 0 10px">Palmarès (${pal.length})</h3><div class="resgrid">${pal.slice(0,30).map(i=>archHTML({...i,competition:i.year+" · "+i.competition})).join("")}</div>`; }
+  if(!any) h+=emptyHTML("Aucun résultat","Essaie avec un autre mot (ex. « PSG », « Nadal », « Top 14 »).");
+  return h+`<div style="height:40px"></div>`;
+}
+let qTimer=null;
+document.getElementById("q").addEventListener("input", e=>{
+  clearTimeout(qTimer); const v=e.target.value;
+  qTimer=setTimeout(()=>{ state.q=v; if(state.view!=="recherche"){ state.view="recherche"; try{history.replaceState(null,"","#recherche");}catch(err){} } renderView(); },180);
+});
+document.getElementById("q").addEventListener("keydown", e=>{ if(e.key==="Enter"){ state.q=e.target.value; go("recherche"); } });
+
+/* ---------- Building blocks ---------- */
+function kicker(a, extra=""){ return `<span class="kicker ${extra}">${S(a.sport).e} ${esc(S(a.sport).n)}</span>`; }
+function heroHTML(a){
+  return `<div class="hero" data-open="${esc(a.id)}"><div class="cover" style="${coverStyle(a)}"></div><div class="shade"></div>
+    <button class="del" data-del-a="${esc(a.id)}">✕</button>
+    <div class="txt">${kicker(a)} ${a.featured?'<span class="kicker hot">À la une</span>':""}
+      <h1>${esc(a.title)}</h1><p>${esc(a.summary)}</p>
+      <div class="meta" style="margin-top:10px;color:#b7bdcc">${ago(a.createdAt)}</div></div></div>`;
+}
+function cardHTML(a, big){
+  return `<div class="card ${big?"big":""}" data-open="${esc(a.id)}"><button class="del" data-del-a="${esc(a.id)}">✕</button>
+    <div class="cover" style="${coverStyle(a)}"></div>
+    <div class="body">${kicker(a)}<h4>${esc(a.title)}</h4><p>${esc(a.summary)}</p><span class="meta">${ago(a.createdAt)}</span></div></div>`;
+}
+function miniHTML(a){
+  return `<div class="mini" data-open="${esc(a.id)}"><button class="del" data-del-a="${esc(a.id)}">✕</button>
+    <div class="cover" style="${coverStyle(a)}"></div>
+    <div><h5>${esc(a.title)}</h5><div class="meta" style="margin-top:4px">${ago(a.createdAt)}</div></div></div>`;
+}
+function filHTML(list){
+  if(!list.length) return "";
+  return `<div class="fil"><h3><i></i> Le fil info</h3><ul>${list.map(a=>`<li data-open="${esc(a.id)}"><span class="h">${hhmm(a.createdAt)}</span><div><div class="tt">${esc(a.title)}</div><div class="sp">${S(a.sport).e} ${S(a.sport).n}</div></div></li>`).join("")}</ul></div>`;
+}
+function mrowHTML(r){
+  const hs=parseFloat(r.homeScore), as=parseFloat(r.awayScore);
+  const done=r.status==="fin" && !isNaN(hs)&&!isNaN(as)&&hs!==as;
+  const ca=done?(hs>as?"w":"l"):"", cb=done?(as>hs?"w":"l"):"";
+  const sc = r.status==="soon" ? "–" : `${esc(r.homeScore||"–")} - ${esc(r.awayScore||"–")}`;
+  return `<div class="mrow"><span class="a ${ca} link" data-search="${esc(r.home)}">${esc(r.home)}</span><span class="s">${sc}</span><span class="b ${cb} link" data-search="${esc(r.away)}">${esc(r.away)}</span>
+    <button class="del" data-del-r="${esc(r.id)}">✕</button></div>`;
+}
+function byCompetition(list){
+  const g={}; list.forEach(r=>{ const k=(S(r.sport).e)+" "+(r.competition||S(r.sport).n); (g[k] ||= []).push(r); });
+  return Object.entries(g).map(([k,v])=>{ const c=compOf(v[0]); return `<div class="compet ${c?"link":""}" ${c?`data-go="c-${esc(c.id)}"`:""}>${esc(k)}${c?" ›":""}</div>${v.map(mrowHTML).join("")}`; }).join("");
+}
+function latestDate(list){ return list.reduce((m,r)=> (r.date||"")>m ? r.date : m, ""); }
+function resultsBox(list, title, max){
+  if(!list.length) return "";
+  const d=latestDate(list);
+  let day=list.filter(r=>r.date===d);
+  const more = max && day.length>max;
+  if(max) day=day.slice(0,max);
+  return `<div class="box"><h3>${title}<small>${esc(fmtDay(d))}</small></h3>${byCompetition(day)}
+    ${more?`<div style="margin-top:10px"><button class="chip" data-go="results">Tous les résultats →</button></div>`:""}</div>`;
+}
+function emptyHTML(t,s){ return `<div class="empty"><b>${t}</b>${s}</div>`; }
+
+/* ---------- Scores strip ---------- */
+function renderScores(){
+  const d=latestDate(state.results);
+  const items=state.results.filter(r=>r.date===d && r.status!=="soon").slice(0,30);
+  if(!items.length){ $("#scores").style.display="none"; return; }
+  $("#scores").style.display="block";
+  $("#scoresIn").innerHTML=`<div class="lab">SCORES<small>${esc(fmtDay(d))}</small></div>`+items.map(r=>{
+    const hs=parseFloat(r.homeScore), as=parseFloat(r.awayScore), w=!isNaN(hs)&&!isNaN(as)&&hs!==as;
+    return `<div class="sc-card" data-go="results"><div class="c">${S(r.sport).e} ${esc(r.competition||S(r.sport).n)}</div>
+      <div class="t ${w&&hs<as?"l":""}"><span>${esc(r.home)}</span><b>${esc(r.homeScore||"")}</b></div>
+      <div class="t ${w&&as<hs?"l":""}"><span>${esc(r.away)}</span><b>${esc(r.awayScore||"")}</b></div></div>`;
+  }).join("");
+}
+
+/* ---------- Palmarès ---------- */
+function archHTML(i){
+  if(i.kind==="titre") return `<div class="res"><div class="comp"><span>${S(i.sport).e} ${esc(i.competition)}</span><span class="status st-soon">🏆 Titre</span></div>
+    <div class="row win"><span>${esc(i.home)}</span><span class="sc">1er</span></div>${i.note?`<div class="meta" style="margin-top:4px">${esc(i.note)}</div>`:""}</div>`;
+  return `<div class="res"><div class="comp"><span>${S(i.sport).e} ${esc(i.competition)}</span><span class="status st-fin">Finale</span></div>
+    <div class="row win"><span>🏆 ${esc(i.home)}</span><span class="sc">${esc(i.homeScore)}</span></div>
+    <div class="row lose"><span>${esc(i.away)}</span><span class="sc">${esc(i.awayScore)}</span></div>${i.note?`<div class="meta" style="margin-top:4px">${esc(i.note)}</div>`:""}</div>`;
+}
+let palSport="all";
+function palmaresHTML(onlySport){
+  const years=state.archive.slice().sort((a,b)=>b.year-a.year);
+  if(!years.length) return "";
+  const sp = onlySport || palSport;
+  const yrs=years.map(y=>y.year);
+  let h="";
+  if(!onlySport){
+    const used=new Set(); years.forEach(y=>(y.items||[]).forEach(i=>used.add(i.sport)));
+    h+=`<div class="chipbar"><button class="chip ${sp==="all"?"on":""}" data-pal="all">Tous</button>${[...used].map(k=>`<button class="chip ${sp===k?"on":""}" data-pal="${k}">${S(k).e} ${S(k).n}</button>`).join("")}</div>`;
+  }
+  h+=`<div style="display:flex;gap:10px;align-items:center;margin-bottom:16px"><span class="meta">Année :</span>
+    <select id="yearSel" style="width:auto;padding:7px 12px"><option value="all">Toutes</option>${yrs.map(y=>`<option value="${y}" ${String(state.year)===String(y)?"selected":""}>${y}</option>`).join("")}</select></div>`;
+  let any=false;
+  years.forEach(y=>{
+    if(state.year!=="all" && String(y.year)!==String(state.year)) return;
+    const items=(y.items||[]).filter(i=>sp==="all"||i.sport===sp);
+    if(!items.length) return; any=true;
+    h+=`<div class="rgroup"><div class="rdate">${y.year}</div><div class="resgrid">${items.map(archHTML).join("")}</div></div>`;
+  });
+  if(!any) h+=emptyHTML("Rien pour ce filtre","Essaie une autre année.");
+  return h;
+}
+
+/* ---------- Views ---------- */
+function renderView(){ render(); }
+function render(){
+  renderNav(); renderScores();
+  const A=state.articles, R=state.results, loading=!state.loadedA||!state.loadedR;
+  const v=state.view; let h="";
+  const noA = loading ? emptyHTML("Chargement…","") : emptyHTML("Les actus arrivent","Les premières actus du jour vont bientôt apparaître ici.");
+
+  if(v==="home"){
+    const hero=A.find(a=>a.featured && Date.now()-a.createdAt<36*3600e3) || A[0];
+    if(hero) h+=`<div class="flash" data-open="${esc(A[0].id)}"><span class="b">FLASH</span><span class="x">${esc(A[0].title)}</span><span class="meta" style="margin-left:auto;flex-shrink:0">${ago(A[0].createdAt)}</span></div>`;
+    h+=`<div class="top-grid"><div>${hero?heroHTML(hero):noA}</div>${filHTML(A.slice(0,15)) || resultsBox(R,"Résultats",8) || ""}</div>`;
+    const rest=A.filter(a=>a!==hero);
+    h+=`<div class="pub"><!-- PUB 1 : bloc AdSense horizontal --></div>`;
+    h+=`<div class="layout"><div>`;
+    if(rest.length){
+      h+=`<h2 class="sec">Les infos du jour</h2><div class="grid">${rest.slice(0,6).map(a=>cardHTML(a)).join("")}</div>`;
+      NAV.forEach(k=>{
+        const list=A.filter(a=>a.sport===k && a!==hero).slice(0,5);
+        if(!list.length) return;
+        h+=`<h2 class="sec"><span class="ic">${S(k).e}</span>${S(k).n}<button class="more" data-go="${k}">Toute l'actu ${S(k).n} →</button></h2>
+            <div class="sport-block">${cardHTML(list[0],true)}<div class="stack">${list.slice(1).map(miniHTML).join("") || ""}</div></div>`;
+      });
+    } else if(!hero) h+=`<div style="margin-top:20px">${noA}</div>`;
+    h+=`</div><aside>
+      <h2 class="sec">Résultats</h2>${resultsBox(R,"Les scores",14) || emptyHTML(loading?"Chargement…":"Pas encore de scores","Ils arrivent chaque matin.")}
+      <div class="pub"><!-- PUB 2 : bloc AdSense carré --></div>
+      ${state.archive.length?`<div class="box" style="cursor:pointer" data-go="palmares"><h3>🏆 Palmarès<small>1999 – 2026</small></h3><p class="meta">Toutes les grandes finales et les champions depuis 1999.</p></div>`:""}
+    </aside></div>`;
+  }
+  else if(SPORTS[v]){
+    const list=A.filter(a=>a.sport===v), rs=R.filter(r=>r.sport===v);
+    h+=`<div class="sport-head"><div class="cover" style="background-image:url('${coverURL(v,"head")}')"></div><div class="shade"></div><h1>${S(v).e} ${S(v).n}</h1></div>`;
+    h+=`<div class="layout"><div>`;
+    if(list.length){
+      h+=`<h2 class="sec">L'actu ${S(v).n}</h2><div class="top-grid" style="grid-template-columns:1fr;margin-top:0">${heroHTML(list[0])}</div>`;
+      if(list.length>1) h+=`<div class="grid" style="margin-top:18px">${list.slice(1).map(a=>cardHTML(a)).join("")}</div>`;
+    } else h+=`<h2 class="sec">L'actu ${S(v).n}</h2>`+(loading?emptyHTML("Chargement…",""):emptyHTML("Pas encore d'actu "+S(v).n,"Revenez demain matin."));
+    const cl=state.comps.filter(k=>k.sport===v);
+    if(cl.length) h+=`<h2 class="sec">Compétitions</h2><div class="comp-grid">${cl.map(compCard).join("")}</div>`;
+    h+=`<h2 class="sec">Palmarès</h2>${palmaresHTML(v)}</div><aside><h2 class="sec">Résultats</h2>${resultsBox(rs,"Derniers scores") || emptyHTML("Aucun score récent","")}</aside></div>`;
+  }
+  else if(v==="results"){
+    h+=`<h2 class="sec">Résultats</h2>`;
+    if(!R.length) h+= loading?emptyHTML("Chargement…",""):emptyHTML("Pas encore de résultats","Ils arrivent chaque matin.");
+    const by={}; R.forEach(r=>{ (by[r.date] ||= []).push(r); });
+    Object.keys(by).sort().reverse().forEach(d=>{
+      const g={}; by[d].forEach(r=>{ (g[r.sport] ||= []).push(r); });
+      h+=`<div class="rgroup"><div class="rdate">${esc(fmtDay(d))}</div><div class="resgrid">${Object.entries(g).map(([sp,list])=>`<div class="box" style="margin:0"><h3>${S(sp).e} ${S(sp).n}</h3>${byCompetition(list)}</div>`).join("")}</div></div>`;
+    });
+    h+=`<div style="height:40px"></div>`;
+  }
+  else if(v==="competitions"){ h+=competitionsHTML(); }
+  else if(v==="autres"){
+    const others=Object.keys(SPORTS).filter(k=>!NAV.includes(k));
+    h+=`<h2 class="sec">Autres sports</h2><div class="comp-grid">${others.map(k=>`<div class="comp-card" data-go="${k}"><div class="ic" style="background:linear-gradient(135deg,${S(k).c1},${S(k).c2})">${S(k).e}</div><div><b>${S(k).n}</b><span>${state.comps.filter(c=>c.sport===k).length} compétitions</span></div></div>`).join("")}</div>`;
+    others.forEach(k=>{ const list=state.articles.filter(a=>a.sport===k).slice(0,4); if(list.length) h+=`<h2 class="sec">${S(k).e} ${S(k).n}</h2><div class="grid">${list.map(a=>cardHTML(a)).join("")}</div>`; });
+    h+=`<div style="height:40px"></div>`;
+  }
+  else if(v==="recherche"){ h+=searchHTML(); }
+  else if(v.startsWith("c-")){ h+=compPageHTML(v.slice(2)); }
+  else if(v==="palmares"){
+    h+=`<h2 class="sec">🏆 Palmarès 1999 – 2026</h2><p class="meta" style="margin:-6px 0 12px">Les grandes finales et les champions de chaque année.</p>${palmaresHTML()}<div style="height:40px"></div>`;
+  }
+  $("#view").innerHTML=h;
+  if(A[0]) $("#updated").textContent="Mis à jour "+ago(A[0].createdAt);
+}
+
+/* ---------- Article ---------- */
+function linkify(t){ return esc(t).replace(/(https?:\/\/[^\s<]+)/g,'<a href="$1" target="_blank" rel="noopener">$1</a>'); }
+function openArticle(id){
+  const a=state.articles.find(x=>x.id===id); if(!a) return;
+  const raw=String(a.content||""); const i=raw.search(/\n\s*Sources\s*:/i);
+  const body= i>=0 ? raw.slice(0,i) : raw, src= i>=0 ? raw.slice(i).trim() : "";
+  const paras=body.split(/\n\s*\n/).map(p=>p.trim()).filter(Boolean).map(p=>`<p>${linkify(p)}</p>`).join("");
+  const rel=state.articles.filter(x=>x.sport===a.sport && x.id!==a.id).slice(0,3);
+  $("#readBox").innerHTML=`<div class="cover" style="${coverStyle(a)}"></div>
+    <div class="mb"><div style="display:flex;justify-content:space-between;align-items:center">${kicker(a)}<button class="x" data-close="readOverlay">×</button></div>
+      <h1>${esc(a.title)}</h1>
+      <div class="meta">Publié le ${new Date(a.createdAt).toLocaleString("fr-FR",{weekday:"long",day:"numeric",month:"long",hour:"2-digit",minute:"2-digit"})}</div>
+      <p class="chapo">${esc(a.summary)}</p><div class="content">${paras}</div>
+      ${src?`<div class="src">${linkify(src).replace(/\n/g,"<br>")}</div>`:""}</div>
+    ${rel.length?`<div class="related"><h4>À lire aussi</h4>${rel.map(miniHTML).join("")}</div>`:""}`;
+  $("#readOverlay").classList.add("show"); $("#readOverlay").scrollTop=0;
+}
+
+/* ---------- Clicks ---------- */
+document.addEventListener("click", e=>{
+  const da=e.target.closest("[data-del-a]"); if(da){ e.stopPropagation(); askDelete("articles",da.dataset.delA,da); return; }
+  const dr=e.target.closest("[data-del-r]"); if(dr){ e.stopPropagation(); askDelete("results",dr.dataset.delR,dr); return; }
+  const o=e.target.closest("[data-open]"); if(o){ openArticle(o.dataset.open); return; }
+  const g=e.target.closest("[data-go]"); if(g){ $("#readOverlay").classList.remove("show"); go(g.dataset.go); return; }
+  const ct=e.target.closest("[data-ctab]"); if(ct){ state.ctab=ct.dataset.ctab; render(); return; }
+  const sr=e.target.closest("[data-search]"); if(sr){ $("#readOverlay").classList.remove("show"); state.q=sr.dataset.search; $("#q").value=state.q; go("recherche"); return; }
+  const p=e.target.closest("[data-pal]"); if(p){ palSport=p.dataset.pal; render(); return; }
+  const c=e.target.closest("[data-close]"); if(c){ $("#"+c.dataset.close).classList.remove("show"); return; }
+  if(e.target.classList.contains("overlay")) e.target.classList.remove("show");
+});
+document.addEventListener("change", e=>{ if(e.target.id==="yearSel"){ state.year=e.target.value; render(); } });
+document.addEventListener("keydown", e=>{ if(e.key==="Escape") document.querySelectorAll(".overlay.show").forEach(o=>o.classList.remove("show")); });
+
+let pending=null;
+function askDelete(col,id,btn){
+  if(pending===id){ pending=null; db.collection(col).doc(id).delete().catch(()=>showNotice("Suppression impossible.")); return; }
+  pending=id; btn.textContent="?"; btn.style.background="var(--hot)"; btn.title="Clique encore pour confirmer";
+  setTimeout(()=>{ if(pending===id){ pending=null; render(); } },3000);
+}
+
+function showNotice(t){ const n=$("#notice"); n.textContent=t; n.classList.toggle("show",!!t); }
+
+/* ---------- Données (fichiers data/*.json) ---------- */
+const h0=location.hash.slice(1); if(validView(h0)) state.view=h0;
+render();
+async function getJSON(p){ try{ const r=await fetch(p+"?v="+Date.now()); if(!r.ok) return []; return await r.json(); }catch(e){ return null; } }
+(async()=>{
+  const [a,r,ar,c]=await Promise.all([getJSON("data/articles.json"),getJSON("data/results.json"),getJSON("data/archive.json"),getJSON("data/competitions.json")]);
+  if(a===null) showNotice("Impossible de charger les données. Mets le site en ligne pour qu'il fonctionne (voir README).");
+  const o={live:0,fin:1,soon:2};
+  state.articles=(a||[]).sort((x,y)=>y.createdAt-x.createdAt);
+  state.results=(r||[]).sort((x,y)=>(y.date||"").localeCompare(x.date||"")||(o[x.status]-o[y.status])||((x.competition||"").localeCompare(y.competition||"")));
+  state.archive=ar||[]; state.comps=c||[];
+  state.loadedA=state.loadedR=true; render();
+})();
+
+/* ---------- Bannière cookies ---------- */
+(function(){
+  let ok=null; try{ ok=localStorage.getItem("cookies"); }catch(e){}
+  if(ok) return;
+  const b=document.createElement("div"); b.className="cookie";
+  b.innerHTML='<span>Ce site utilise des cookies pour la publicité et la mesure d\'audience. <a href="mentions-legales.html">En savoir plus</a></span><span style="display:flex;gap:8px"><button data-c="refuse">Refuser</button><button data-c="accept" class="ok">Accepter</button></span>';
+  document.body.appendChild(b);
+  b.addEventListener("click",e=>{ const c=e.target.closest("[data-c]"); if(!c) return; try{ localStorage.setItem("cookies",c.dataset.c); }catch(err){} b.remove(); });
+})();
+</script>
+</body>
+</html>
