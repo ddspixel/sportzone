@@ -10,7 +10,7 @@ par ex. "2026-11-18-foot-psg-om" ou "ligue-1").
 - articles et results : l'élément remplace celui qui a le même id.
 - competitions et players : les champs donnés sont fusionnés dans la compétition existante
   (pratique pour ne mettre à jour que "standings" et "standingsUpdated").
-Les vieux résultats (plus de 60 jours) et les vieilles actus (au-delà des 300
+Les vieux résultats (plus de 60 jours) et les vieilles actus (au-delà des 2000
 plus récentes) sont retirés pour garder le site léger.
 """
 import json
@@ -57,7 +57,7 @@ def main():
             items.sort(key=lambda r: (r.get("date") or "", r.get("time") or ""), reverse=True)
         elif name == "articles":
             items.sort(key=lambda a: a.get("createdAt") or 0, reverse=True)
-            items = items[:300]
+            items = items[:2000]
         elif name == "players":
             items.sort(key=lambda p: (p.get("sport") or "", p.get("name") or ""))
         else:

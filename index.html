@@ -550,7 +550,7 @@ function outcome(r,t){ const home=isMe(t,r.sport,r.home); const a=parseFloat(r.h
 function teamMatches(t){ return state.results.filter(r=>isMe(t,r.sport,r.home)||isMe(t,r.sport,r.away)); }
 function teamStandings(t){ const out=[]; state.comps.forEach(k=>{ if(k.sport!==t.sport) return; const st=k.standings||[]; const i=st.findIndex(r=>isMe(t,k.sport,r.team)); if(i>=0) out.push({k,row:st[i],i}); }); return out; }
 function teamArchive(t){ const out=[]; state.archive.slice().sort((a,b)=>b.year-a.year).forEach(y=>(y.items||[]).forEach(i=>{ if(isMe(t,i.sport,i.home)||isMe(t,i.sport,i.away)) out.push({...i,year:y.year}); })); return out; }
-function teamArticles(t){ const al=[...t.aliases].filter(a=>a.length>=3).map(norm); return state.articles.filter(a=>{ const txt=" "+norm(a.title+" "+a.summary+" "+a.content)+" "; return al.some(x=> new RegExp("[^a-z0-9]"+x.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"[^a-z0-9]").test(txt)); }); }
+function teamArticles(t){ const al=[...t.aliases].filter(a=>a.length>=3).map(norm); return state.articles.filter(a=>{ if(Array.isArray(a.teams)&&a.teams.some(x=>al.includes(norm(x)))) return true; const txt=" "+norm(a.title+" "+a.summary+" "+a.content)+" "; return al.some(x=> new RegExp("[^a-z0-9]"+x.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"[^a-z0-9]").test(txt)); }); }
 function stdTableHTML(k,t){
   const st=k.standings||[]; const cols=[["j","J"],["g","G"],["n","N"],["p","P"],["diff","Diff"]].filter(([f])=>st.some(r=>r[f]!==undefined && r[f]!==""));
   return `<div class="box" style="padding:6px 10px;overflow-x:auto"><h3 style="padding:8px 4px 0"><span class="link" data-go="c-${esc(k.id)}">${S(k.sport).e} ${esc(k.name)} ›</span><small>${k.standingsUpdated?esc(fmtDay(k.standingsUpdated)):""}</small></h3><table class="std"><thead><tr><th class="p">#</th><th class="tm">${esc(k.standingsLabel||"Équipe")}</th>${cols.map(c=>`<th>${c[1]}</th>`).join("")}<th>Pts</th></tr></thead>
@@ -577,7 +577,7 @@ function teamPageHTML(id){
       <div class="vs"><span class="link ${isMe(t,n.sport,n.home)?"me":""}" data-team="${esc(n.sport+"|"+n.home)}">${esc(n.home)}</span><span>VS</span><span class="link ${isMe(t,n.sport,n.away)?"me":""}" data-team="${esc(n.sport+"|"+n.away)}">${esc(n.away||"")}</span></div></div>`; }
     if(past.length) body+=`<h2 class="sec" style="margin-top:6px">Derniers résultats</h2>`+rows(past.slice(0,5));
     stds.forEach(s=>{ body+=`<h2 class="sec">Classement</h2>`+stdTableHTML(s.k,t); });
-    if(arts.length) body+=`<h2 class="sec">Dernières actus</h2><div class="grid">${arts.slice(0,3).map(a=>cardHTML(a)).join("")}</div>`;
+    if(arts.length) body+=`<h2 class="sec">Dernières actus</h2><div class="grid">${arts.slice(0,6).map(a=>cardHTML(a)).join("")}</div>`;
     if(!past.length && !next.length && !stds.length && !arts.length) body+= pal.length ? `<h2 class="sec" style="margin-top:6px">Palmarès</h2><div class="resgrid">${pal.map(i=>archHTML({...i,competition:i.year+" · "+i.competition})).join("")}</div>` : emptyHTML("Pas encore de données récentes","Elles arrivent chaque matin.");
   }
   else if(tab==="res") body = past.length ? rows(past) : emptyHTML("Aucun résultat récent","Les résultats sont ajoutés chaque matin.");
@@ -617,7 +617,7 @@ function playerIndex(){
   });
   PI=idx; PIsig=sig; return idx;
 }
-function playerArticles(p){ const al=[...p.aliases].filter(a=>a.length>=4).map(norm); return state.articles.filter(a=>{ const txt=" "+norm(a.title+" "+a.summary+" "+a.content)+" "; return al.some(x=>new RegExp("[^a-z0-9]"+x.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"[^a-z0-9]").test(txt)); }); }
+function playerArticles(p){ const al=[...p.aliases].filter(a=>a.length>=4).map(norm); return state.articles.filter(a=>{ if(Array.isArray(a.players)&&a.players.some(x=>al.includes(norm(x)))) return true; const txt=" "+norm(a.title+" "+a.summary+" "+a.content)+" "; return al.some(x=>new RegExp("[^a-z0-9]"+x.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"[^a-z0-9]").test(txt)); }); }
 function ageOf(iso){ if(!iso) return ""; const b=new Date(iso+"T12:00:00"), n=new Date(); let a=n.getFullYear()-b.getFullYear(); if(n<new Date(n.getFullYear(),b.getMonth(),b.getDate())) a--; return isNaN(a)?"":a+" ans"; }
 function playerPageHTML(id){
   const p=playerIndex()[id];
