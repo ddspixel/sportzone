@@ -42,6 +42,7 @@ s = s.replace('${state.archive.length?`<div class="box" style="cursor:pointer" d
 s = s.replace("<p style=\"margin-top:8px\">© 2026 SportZone. Tous droits réservés.</p>",
               "<p style=\"margin-top:8px\">© 2026 SportZone. Tous droits réservés.</p><p style=\"margin-top:8px\"><a href=\"mentions-legales.html\">Mentions légales et cookies</a></p>", 1)
 s = s.replace('<title>SportZone — Actus & Résultats</title>', '''<title>SportZone — Actus & Résultats sport</title>
+<meta name="google-site-verification" content="RBlbmXCUW-cRgolkeX1qeiO9EuIS8cJRNfKQuTHO4Us" />
 <meta name="description" content="SportZone : l'actu sport du jour, les résultats, calendriers, classements et fiches de 95 compétitions et de centaines d'équipes, plus le palmarès depuis 1999.">
 <!-- ADSENSE : colle ici la ligne <script async src="https://pagead2.googlesyndication.com/..."> donnée par Google -->''')
 assert 'claude.use' not in s, "il reste du code Claude"
