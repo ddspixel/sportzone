@@ -40,7 +40,7 @@ footer{border-top''', 1)
 s = s.replace("h+=`<div class=\"layout\"><div>`;\n    if(rest.length){", "h+=`<div class=\"pub\"><!-- PUB 1 : bloc AdSense horizontal --></div>`;\n    h+=`<div class=\"layout\"><div>`;\n    if(rest.length){", 1)
 s = s.replace('${state.archive.length?`<div class="box" style="cursor:pointer" data-go="palmares">', '<div class="pub"><!-- PUB 2 : bloc AdSense carré --></div>\n      ${state.archive.length?`<div class="box" style="cursor:pointer" data-go="palmares">', 1)
 s = s.replace("<p style=\"margin-top:8px\">© 2026 SportZone. Tous droits réservés.</p>",
-              "<p style=\"margin-top:8px\">© 2026 SportZone. Tous droits réservés.</p><p style=\"margin-top:8px\"><a href=\"joueurs/\">Fiches joueurs</a> · <a href=\"mentions-legales.html\">Mentions légales et cookies</a></p>", 1)
+              "<p style=\"margin-top:8px\">© 2026 SportZone. Tous droits réservés.</p><p style=\"margin-top:8px\"><a href=\"actus/\">Toutes les actus</a> · <a href=\"equipes/\">Équipes</a> · <a href=\"joueurs/\">Fiches joueurs</a> · <a href=\"mentions-legales.html\">Mentions légales et cookies</a></p>", 1)
 s = s.replace('<title>SportZone — Actus & Résultats</title>', '''<title>SportZone — Actus & Résultats sport</title>
 <meta name="google-site-verification" content="RBlbmXCUW-cRgolkeX1qeiO9EuIS8cJRNfKQuTHO4Us" />
 <meta name="description" content="SportZone : l'actu sport du jour, les résultats, calendriers, classements et fiches de 95 compétitions et de centaines d'équipes, plus le palmarès depuis 1999.">
