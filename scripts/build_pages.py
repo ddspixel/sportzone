@@ -140,7 +140,7 @@ def page(title, desc, canonical, body, extra_head="", og="profile"):
 <main class="wrap">
 {body}
 </main>
-<footer><div class="wrap">© {date.today().year} SportZone · <a href="/">Accueil</a> · <a href="/actus/">Toutes les actus</a> · <a href="/equipes/">Équipes</a> · <a href="/joueurs/">Joueurs</a> · <a href="/mentions-legales.html">Mentions légales</a></div></footer>
+<footer><div class="wrap">© {date.today().year} SportZone · <a href="/">Accueil</a> · <a href="/actus/">Toutes les actus</a> · <a href="/equipes/">Équipes</a> · <a href="/joueurs/">Joueurs</a> · <a href="/mentions-legales.html">Mentions légales</a> · <a href="/confidentialite.html">Confidentialité</a> · <a href="/contact.html">Contact</a></div></footer>
 </body>
 </html>
 """
@@ -491,7 +491,7 @@ def sitemap(players, articles, teams):
     urls += [(f"{SITE}/actus/{a['id']}.html", fr_ms(a.get("createdAt", 0))[1] or today, "weekly", "0.8") for a in articles]
     urls += [(f"{SITE}/equipes/{t}.html", today, "daily", "0.7") for t in sorted(teams)]
     urls += [(f"{SITE}/joueurs/{p['id']}.html", p.get("updated") or today, "weekly", "0.7") for p in players]
-    urls.append((f"{SITE}/mentions-legales.html", None, "yearly", "0.2"))
+    urls += [(f"{SITE}/{x}.html", None, "yearly", "0.2") for x in ("mentions-legales", "confidentialite", "contact")]
     out = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
     for loc, mod, freq, prio in urls:
         lm = f"<lastmod>{mod}</lastmod>" if mod else ""

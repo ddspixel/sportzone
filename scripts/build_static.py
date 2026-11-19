@@ -28,7 +28,7 @@ async function getJSON(p){ try{ const r=await fetch(p+"?v="+Date.now()); if(!r.o
   let ok=null; try{ ok=localStorage.getItem("cookies"); }catch(e){}
   if(ok) return;
   const b=document.createElement("div"); b.className="cookie";
-  b.innerHTML='<span>Ce site utilise des cookies pour la publicité et la mesure d\\'audience. <a href="mentions-legales.html">En savoir plus</a></span><span style="display:flex;gap:8px"><button data-c="refuse">Refuser</button><button data-c="accept" class="ok">Accepter</button></span>';
+  b.innerHTML='<span>Ce site utilise des cookies pour la publicité et la mesure d\\'audience. <a href="confidentialite.html">En savoir plus</a></span><span style="display:flex;gap:8px"><button data-c="refuse">Refuser</button><button data-c="accept" class="ok">Accepter</button></span>';
   document.body.appendChild(b);
   b.addEventListener("click",e=>{ const c=e.target.closest("[data-c]"); if(!c) return; try{ localStorage.setItem("cookies",c.dataset.c); }catch(err){} b.remove(); });
 })();
@@ -40,7 +40,7 @@ footer{border-top''', 1)
 s = s.replace("h+=`<div class=\"layout\"><div>`;\n    if(rest.length){", "h+=`<div class=\"pub\"><!-- PUB 1 : bloc AdSense horizontal --></div>`;\n    h+=`<div class=\"layout\"><div>`;\n    if(rest.length){", 1)
 s = s.replace('${state.archive.length?`<div class="box" style="cursor:pointer" data-go="palmares">', '<div class="pub"><!-- PUB 2 : bloc AdSense carré --></div>\n      ${state.archive.length?`<div class="box" style="cursor:pointer" data-go="palmares">', 1)
 s = s.replace("<p style=\"margin-top:8px\">© 2026 SportZone. Tous droits réservés.</p>",
-              "<p style=\"margin-top:8px\">© 2026 SportZone. Tous droits réservés.</p><p style=\"margin-top:8px\"><a href=\"actus/\">Toutes les actus</a> · <a href=\"equipes/\">Équipes</a> · <a href=\"joueurs/\">Fiches joueurs</a> · <a href=\"mentions-legales.html\">Mentions légales et cookies</a></p>", 1)
+              "<p style=\"margin-top:8px\">© 2026 SportZone. Tous droits réservés.</p><p style=\"margin-top:8px\"><a href=\"actus/\">Toutes les actus</a> · <a href=\"equipes/\">Équipes</a> · <a href=\"joueurs/\">Fiches joueurs</a> · <a href=\"mentions-legales.html\">Mentions légales</a> · <a href=\"confidentialite.html\">Confidentialité</a> · <a href=\"contact.html\">Contact</a></p>", 1)
 s = s.replace('<title>SportZone — Actus & Résultats</title>', '''<title>SportZone — Actus & Résultats sport</title>
 <meta name="google-site-verification" content="RBlbmXCUW-cRgolkeX1qeiO9EuIS8cJRNfKQuTHO4Us" />
 <meta name="description" content="SportZone : l'actu sport du jour, les résultats, calendriers, classements et fiches de 95 compétitions et de centaines d'équipes, plus le palmarès depuis 1999.">

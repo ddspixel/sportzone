@@ -307,7 +307,7 @@ footer button{text-align:left;color:var(--muted)} footer button:hover{color:var(
 
 <footer><div class="wrap">
   <div><div class="logo" data-go="home"><div class="mk">⚡</div>SPORT<span>ZONE</span></div>
-  <p style="margin-top:8px;max-width:300px">Toute l'actu sport et les résultats, mis à jour chaque jour.</p><p style="margin-top:8px">© 2026 SportZone. Tous droits réservés.</p><p style="margin-top:8px"><a href="actus/">Toutes les actus</a> · <a href="equipes/">Équipes</a> · <a href="joueurs/">Fiches joueurs</a> · <a href="mentions-legales.html">Mentions légales et cookies</a></p></div>
+  <p style="margin-top:8px;max-width:300px">Toute l'actu sport et les résultats, mis à jour chaque jour.</p><p style="margin-top:8px">© 2026 SportZone. Tous droits réservés.</p><p style="margin-top:8px"><a href="actus/">Toutes les actus</a> · <a href="equipes/">Équipes</a> · <a href="joueurs/">Fiches joueurs</a> · <a href="mentions-legales.html">Mentions légales</a> · <a href="confidentialite.html">Confidentialité</a> · <a href="contact.html">Contact</a></p></div>
   <div class="cols" id="footCols"></div>
 </div></footer>
 
@@ -909,7 +909,7 @@ async function getJSON(p){ try{ const r=await fetch(p+"?v="+Date.now()); if(!r.o
   let ok=null; try{ ok=localStorage.getItem("cookies"); }catch(e){}
   if(ok) return;
   const b=document.createElement("div"); b.className="cookie";
-  b.innerHTML='<span>Ce site utilise des cookies pour la publicité et la mesure d\'audience. <a href="mentions-legales.html">En savoir plus</a></span><span style="display:flex;gap:8px"><button data-c="refuse">Refuser</button><button data-c="accept" class="ok">Accepter</button></span>';
+  b.innerHTML='<span>Ce site utilise des cookies pour la publicité et la mesure d\'audience. <a href="confidentialite.html">En savoir plus</a></span><span style="display:flex;gap:8px"><button data-c="refuse">Refuser</button><button data-c="accept" class="ok">Accepter</button></span>';
   document.body.appendChild(b);
   b.addEventListener("click",e=>{ const c=e.target.closest("[data-c]"); if(!c) return; try{ localStorage.setItem("cookies",c.dataset.c); }catch(err){} b.remove(); });
 })();
