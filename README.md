@@ -12,6 +12,7 @@ Site d'actu sport : actus du jour, résultats, calendriers, classements de 95 co
   - `competitions.json` — fiches des compétitions et classements
   - `archive.json` — palmarès 1999–2026
 - `scripts/merge.py` — ajoute les nouvelles données du jour dans `data/`
+- `scripts/build_pages.py` — crée une vraie page par joueur dans `joueurs/` (pour que Google les trouve) et refait `sitemap.xml`. Netlify le lance tout seul à chaque mise en ligne (voir `netlify.toml`).
 
 Les données sont mises à jour chaque matin vers 7h45 (heure de Paris) par une tâche automatique de Claude, qui envoie ses modifications dans ce dépôt.
 
@@ -19,7 +20,7 @@ Les données sont mises à jour chaque matin vers 7h45 (heure de Paris) par une 
 
 1. Sur [app.netlify.com](https://app.netlify.com) : **Add new site** → **Import an existing project** → **GitHub**.
 2. Choisis le dépôt `sportzone`.
-3. Laisse **Build command** vide et mets `/` (ou rien) dans **Publish directory**, puis **Deploy**.
+3. Ne touche pas à **Build command** ni à **Publish directory** : c'est le fichier `netlify.toml` qui les règle. Puis **Deploy**.
 
 Ensuite, chaque mise à jour de ce dépôt met le site en ligne automatiquement.
 

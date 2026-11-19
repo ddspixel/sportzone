@@ -1,0 +1,4 @@
+# Netlify : à chaque mise en ligne, crée une page par joueur (joueurs/) et le sitemap.xml
+[build]
+  command = "python3 scripts/build_pages.py"
+  publish = "."
