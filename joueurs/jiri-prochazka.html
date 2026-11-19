@@ -25,7 +25,7 @@ header .wrap{display:flex;align-items:center;justify-content:space-between;heigh
 .logo span{color:var(--accent)}
 header nav{display:flex;gap:12px;flex-wrap:wrap;justify-content:flex-end}
 header nav a{color:var(--muted);text-decoration:none;font-size:14px}
-@media(max-width:480px){.logo{font-size:28px}header nav a{font-size:13px}h1{font-size:42px}}
+@media(max-width:480px){.logo{font-size:26px}header nav{gap:8px}header nav a{font-size:12px}h1{font-size:40px}.res{grid-template-columns:70px 1fr auto 1fr;font-size:13px}}
 .crumbs{color:var(--muted);font-size:13px;margin:18px 0 6px}
 .crumbs a{color:var(--muted)}
 h1{font-family:'Bebas Neue',Impact,sans-serif;font-size:52px;line-height:1;letter-spacing:.5px;margin:6px 0}
@@ -45,16 +45,23 @@ ul.pal li{margin:4px 0}
 .list{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px}
 .list a{display:block;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px;text-decoration:none;color:var(--text)}
 .list a span{display:block;color:var(--muted);font-size:13px}
+.res{display:grid;grid-template-columns:90px 1fr auto 1fr;gap:8px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 12px;margin-top:6px;font-size:14px}
+.res .d{color:var(--muted);font-size:12px}.res .s{font-weight:800;text-align:center;min-width:56px}.res .r{text-align:right}
+.res a{color:var(--text);text-decoration:none}.res .w{font-weight:800}
+.art{font-size:17px}.art p{margin:14px 0}
+.al a{display:block;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px;text-decoration:none;color:var(--text);margin-top:8px}
+.al a span{display:block;color:var(--muted);font-size:13px}
+table.st{width:100%;border-collapse:collapse;font-size:14px}table.st td,table.st th{padding:6px;border-bottom:1px solid var(--line);text-align:left}table.st tr.me{background:var(--panel2);font-weight:800}
 footer{border-top:1px solid var(--line);margin-top:40px;padding:20px 0;color:var(--muted);font-size:13px}
 footer a{color:var(--muted)}
 </style>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Person", "name": "Jiří Procházka", "url": "https://sportzone-8lam.netlify.app/joueurs/jiri-prochazka.html", "nationality": "République tchèque", "birthDate": "1992-10-14", "jobTitle": "Mi-lourds", "memberOf": {"@type": "SportsTeam", "name": "UFC"}, "alternateName": ["Procházka", "Prochazka", "Denisa"]}</script>
 </head>
 <body>
-<header><div class="wrap"><a class="logo" href="/">SPORT<span>ZONE</span></a><nav><a href="/">Actus</a><a href="/joueurs/">Joueurs</a><a href="/#results">Résultats</a></nav></div></header>
+<header><div class="wrap"><a class="logo" href="/">SPORT<span>ZONE</span></a><nav><a href="/actus/">Actus</a><a href="/equipes/">Équipes</a><a href="/joueurs/">Joueurs</a><a href="/#results">Résultats</a></nav></div></header>
 <main class="wrap">
-<div class="crumbs"><a href="/">SportZone</a> › <a href="/joueurs/">Joueurs</a> › MMA</div><h1>Jiří Procházka</h1><div class="sub">🥋 MMA · UFC</div><div class="tags"><span>Mi-lourds</span><span>République tchèque</span><span>34 ans (né le 14 octobre 1992)</span></div><h2>Stats Carrière (novembre 2026)</h2><div class="kpis"><div class="kpi"><small>Bilan MMA</small><b>32-6-1</b></div></div><div class="card"><p>Combattant tchèque au style imprévisible et très offensif, Jiří Procházka a été champion des mi-lourds de l&#x27;UFC. Battu par KO par Carlos Ulberg en avril 2026, il tente de se relancer face à l&#x27;invaincu Navajo Stirling, le 21 novembre à Doha.</p><p class="sub" style="margin-top:8px;font-size:13px">Fiche mise à jour le 19 novembre 2026</p></div><h2>Palmarès</h2><ul class="pal"><li>Champion UFC des mi-lourds (2022)</li></ul><a class="btn" href="/#j-mma-jiri-prochazka">Voir ses matchs et les actus sur SportZone</a><div class="src">Sources : Fightmag <a href="https://www.fightmag.com/ufc-qatar-main-event-jiri-prochazka-faces-navajo-stirling/" rel="nofollow noopener" target="_blank">https://www.fightmag.com/ufc-qatar-main-event-jiri-prochazka-faces-navajo-stirling/</a> ; MMA Sucka <a href="https://mmasucka.com/news/jiri-prochazka-returns-in-ufc-qatar-headliner-against-undefeated-fighter/" rel="nofollow noopener" target="_blank">https://mmasucka.com/news/jiri-prochazka-returns-in-ufc-qatar-headliner-against-undefeated-fighter/</a></div>
+<div class="crumbs"><a href="/">SportZone</a> › <a href="/joueurs/">Joueurs</a> › MMA</div><h1>Jiří Procházka</h1><div class="sub">🥋 MMA · <span>UFC</span></div><div class="tags"><span>Mi-lourds</span><span>République tchèque</span><span>34 ans (né le 14 octobre 1992)</span></div><h2>Stats Carrière (novembre 2026)</h2><div class="kpis"><div class="kpi"><small>Bilan MMA</small><b>32-6-1</b></div></div><div class="card"><p>Combattant tchèque au style imprévisible et très offensif, Jiří Procházka a été champion des mi-lourds de l&#x27;UFC. Battu par KO par Carlos Ulberg en avril 2026, il tente de se relancer face à l&#x27;invaincu Navajo Stirling, le 21 novembre à Doha.</p><p class="sub" style="margin-top:8px;font-size:13px">Fiche mise à jour le 19 novembre 2026</p></div><h2>Palmarès</h2><ul class="pal"><li>Champion UFC des mi-lourds (2022)</li></ul><h2>Actus Jiří Procházka</h2><div class="al"><a href="/actus/2026-11-19-ufc-qatar-prochazka-stirling.html">UFC Qatar : Procházka face à l&#x27;invaincu Navajo Stirling pour se relancer<span>19 novembre 2026 · Samedi à Doha, l&#x27;ancien champion des mi-lourds Jiří Procházka affronte le Néo-Zélandais Navajo Stirling, invaincu en 11 combats.</span></a></div><a class="btn" href="/#j-mma-jiri-prochazka">Voir ses matchs et les actus sur SportZone</a><div class="src">Sources : Fightmag <a href="https://www.fightmag.com/ufc-qatar-main-event-jiri-prochazka-faces-navajo-stirling/" rel="nofollow noopener" target="_blank">https://www.fightmag.com/ufc-qatar-main-event-jiri-prochazka-faces-navajo-stirling/</a> ; MMA Sucka <a href="https://mmasucka.com/news/jiri-prochazka-returns-in-ufc-qatar-headliner-against-undefeated-fighter/" rel="nofollow noopener" target="_blank">https://mmasucka.com/news/jiri-prochazka-returns-in-ufc-qatar-headliner-against-undefeated-fighter/</a></div>
 </main>
-<footer><div class="wrap">© 2026 SportZone · <a href="/">Accueil</a> · <a href="/joueurs/">Tous les joueurs</a> · <a href="/mentions-legales.html">Mentions légales</a></div></footer>
+<footer><div class="wrap">© 2026 SportZone · <a href="/">Accueil</a> · <a href="/actus/">Toutes les actus</a> · <a href="/equipes/">Équipes</a> · <a href="/joueurs/">Joueurs</a> · <a href="/mentions-legales.html">Mentions légales</a></div></footer>
 </body>
 </html>

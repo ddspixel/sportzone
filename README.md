@@ -12,7 +12,7 @@ Site d'actu sport : actus du jour, résultats, calendriers, classements de 95 co
   - `competitions.json` — fiches des compétitions et classements
   - `archive.json` — palmarès 1999–2026
 - `scripts/merge.py` — ajoute les nouvelles données du jour dans `data/`
-- `scripts/build_pages.py` — crée une vraie page par joueur dans `joueurs/` (pour que Google les trouve) et refait `sitemap.xml`. Netlify le lance tout seul à chaque mise en ligne (voir `netlify.toml`).
+- `scripts/build_pages.py` — crée une vraie page par joueur (`joueurs/`), par actu (`actus/`) et par équipe (`equipes/`), pour que Google les trouve, et refait `sitemap.xml`. Netlify le lance tout seul à chaque mise en ligne (voir `netlify.toml`).
 
 Les données sont mises à jour chaque matin vers 7h45 (heure de Paris) par une tâche automatique de Claude, qui envoie ses modifications dans ce dépôt.
 
