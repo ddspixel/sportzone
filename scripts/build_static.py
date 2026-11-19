@@ -44,7 +44,8 @@ s = s.replace("<p style=\"margin-top:8px\">© 2026 SportZone. Tous droits réser
 s = s.replace('<title>SportZone — Actus & Résultats</title>', '''<title>SportZone — Actus & Résultats sport</title>
 <meta name="google-site-verification" content="RBlbmXCUW-cRgolkeX1qeiO9EuIS8cJRNfKQuTHO4Us" />
 <meta name="description" content="SportZone : l'actu sport du jour, les résultats, calendriers, classements et fiches de 95 compétitions et de centaines d'équipes, plus le palmarès depuis 1999.">
-<!-- ADSENSE : colle ici la ligne <script async src="https://pagead2.googlesyndication.com/..."> donnée par Google -->''')
+<meta name="google-adsense-account" content="ca-pub-8641114671838839">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8641114671838839" crossorigin="anonymous"></script>''')
 assert 'claude.use' not in s, "il reste du code Claude"
 open(dst, "w", encoding="utf-8").write(s)
 print("OK ->", dst)

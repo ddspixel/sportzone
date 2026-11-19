@@ -134,6 +134,8 @@ def page(title, desc, canonical, body, extra_head="", og="profile"):
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 <style>{CSS}</style>
+<meta name="google-adsense-account" content="ca-pub-8641114671838839">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8641114671838839" crossorigin="anonymous"></script>
 {extra_head}</head>
 <body>
 <header><div class="wrap"><a class="logo" href="/">SPORT<span>ZONE</span></a><nav><a href="/actus/">Actus</a><a href="/equipes/">Équipes</a><a href="/joueurs/">Joueurs</a><a href="/#results">Résultats</a></nav></div></header>
